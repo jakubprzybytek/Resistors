@@ -1,0 +1,13 @@
+{
+  "name": "resistor-network",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "NPM TypeScript project for resistor network",
+  "scripts": {
+    "start": "tsx main.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "tsx": "^4.15.5"
+  }
+}
