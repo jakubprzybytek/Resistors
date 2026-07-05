@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Circuit Dark</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #17202b;
+    --surface-2: #1e2a38;
+    --border: #2d3846;
+    --text: #e6edf3;
+    --text-dim: #8b98a5;
+    --accent: #22e0a8;
+    --accent-dim: #16a37a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    background-image:
+      linear-gradient(rgba(34,224,168,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,224,168,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .app { width: 100%; max-width: 560px; }
+  .app__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 0.4rem;
+    letter-spacing: 0.3px;
+  }
+  .app__title::before { content: "⏚ "; color: var(--accent); }
+  .app__subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin: 0 0 2rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 0 0 1px rgba(34,224,168,0.03), 0 8px 24px rgba(0,0,0,0.35);
+  }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
+  .field span { font-size: 0.85rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  textarea, input {
+    font: inherit;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 0.6rem 0.7rem;
+    resize: vertical;
+  }
+  textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+  button {
+    width: 100%;
+    padding: 0.7rem;
+    font: inherit;
+    font-weight: 700;
+    background: var(--accent);
+    color: #06231a;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  button:hover { background: var(--accent-dim); }
+  .result__status {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: rgba(34,224,168,0.1);
+    border: 1px solid rgba(34,224,168,0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+  }
+  .result__value { font-size: 1.8rem; font-weight: 700; margin: 0 0 0.25rem; }
+  .result__deviation { color: var(--text-dim); margin: 0 0 0.9rem; font-size: 0.9rem; }
+  .result__description {
+    font-family: "Cascadia Code", Consolas, monospace;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    color: var(--accent);
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+  .swatches { display: flex; gap: 8px; margin-top: 1.5rem; justify-content: center; }
+  .swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1 class="app__title">Resistor Network Calculator</h1>
+    <p class="app__subtitle">Find a resistor combination that hits your target</p>
+
+    <div class="card">
+      <label class="field">
+        <span>Available Values (Ω)</span>
+        <textarea rows="4">100, 220, 330</textarea>
+      </label>
+      <label class="field">
+        <span>Target Resistance (Ω)</span>
+        <input type="text" value="660" />
+      </label>
+      <button>Calculate</button>
+    </div>
+
+    <div class="card">
+      <span class="result__status">Exact match</span>
+      <p class="result__value">660.00 Ω</p>
+      <p class="result__deviation">2 resistors · deviation +0.00%</p>
+      <p class="result__description">(330Ω + 330Ω)</p>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch" style="background:#0f1419"></div>
+      <div class="swatch" style="background:#17202b"></div>
+      <div class="swatch" style="background:#22e0a8"></div>
+      <div class="swatch" style="background:#e6edf3"></div>
+      <div class="swatch" style="background:#8b98a5"></div>
+    </div>
+  </div>
+</body>
+</html>

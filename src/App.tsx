@@ -20,6 +20,7 @@ function App() {
   return (
     <main className="app">
       <h1 className="app__title">Resistor Network Calculator</h1>
+      <p className="app__subtitle">// find a resistor combination that hits your target</p>
       <ResistorForm onCalculate={handleCalculate} />
       {searched && <ResultCard result={result} target={target ?? 0} />}
     </main>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Minimal Studio</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --border: #e6e8f0;
+    --text: #1e1b2e;
+    --text-dim: #6b7280;
+    --accent: #4f46e5;
+    --accent-dim: #4338ca;
+    --accent-soft: #eef0ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .app { width: 100%; max-width: 560px; }
+  .app__title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 0.4rem;
+  }
+  .app__subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin: 0 0 2rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.04), 0 8px 24px rgba(16,24,40,0.06);
+  }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.2rem; }
+  .field span { font-size: 0.85rem; color: var(--text-dim); font-weight: 600; }
+  textarea, input {
+    font: inherit;
+    background: #fafbfe;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    resize: vertical;
+  }
+  textarea:focus, input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    font: inherit;
+    font-weight: 700;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.35);
+  }
+  button:hover { background: var(--accent-dim); }
+  .result__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  .result__status::before { content: "✓"; }
+  .result__value { font-size: 2rem; font-weight: 800; margin: 0 0 0.3rem; }
+  .result__deviation { color: var(--text-dim); margin: 0 0 1rem; font-size: 0.9rem; }
+  .result__description {
+    font-family: "Cascadia Code", Consolas, monospace;
+    background: #fafbfe;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+  .swatches { display: flex; gap: 8px; margin-top: 1.5rem; justify-content: center; }
+  .swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.06); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1 class="app__title">Resistor Network Calculator</h1>
+    <p class="app__subtitle">Find a resistor combination that hits your target</p>
+
+    <div class="card">
+      <label class="field">
+        <span>Available Values (Ω)</span>
+        <textarea rows="4">100, 220, 330</textarea>
+      </label>
+      <label class="field">
+        <span>Target Resistance (Ω)</span>
+        <input type="text" value="660" />
+      </label>
+      <button>Calculate</button>
+    </div>
+
+    <div class="card">
+      <span class="result__status">Exact match</span>
+      <p class="result__value">660.00 Ω</p>
+      <p class="result__deviation">2 resistors · deviation +0.00%</p>
+      <p class="result__description">(330Ω + 330Ω)</p>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch" style="background:#f6f7fb"></div>
+      <div class="swatch" style="background:#ffffff"></div>
+      <div class="swatch" style="background:#4f46e5"></div>
+      <div class="swatch" style="background:#1e1b2e"></div>
+      <div class="swatch" style="background:#6b7280"></div>
+    </div>
+  </div>
+</body>
+</html>

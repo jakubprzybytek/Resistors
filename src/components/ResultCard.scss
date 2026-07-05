@@ -1,31 +1,47 @@
 .result-card {
-  padding: 1rem;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  background: #f7fafc;
+  padding: 1.5rem;
+  border: 1px dashed var(--bp-border);
+  border-radius: 4px;
+  background: var(--bp-surface);
+  backdrop-filter: blur(2px);
 
   &--empty {
-    color: #718096;
+    color: var(--bp-text-dim);
   }
 
   &__status {
-    font-weight: 600;
-    margin: 0 0 0.5rem;
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--bp-bg);
+    background: var(--bp-accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    margin: 0 0 0.9rem;
   }
 
   &__value {
     margin: 0 0 0.25rem;
-    font-size: 1.1rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--bp-text);
   }
 
   &__deviation {
-    margin: 0 0 0.5rem;
-    color: #4a5568;
+    margin: 0 0 0.9rem;
+    color: var(--bp-text-dim);
+    font-size: 0.85rem;
   }
 
   &__description {
     margin: 0;
-    font-family: monospace;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--bp-border);
+    border-radius: 3px;
+    padding: 0.6rem 0.8rem;
+    color: var(--bp-accent);
     word-break: break-word;
   }
 }

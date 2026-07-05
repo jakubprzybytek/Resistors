@@ -43,6 +43,7 @@ function ResistorForm({ onCalculate }: Props) {
 
   return (
     <form className="resistor-form" onSubmit={handleSubmit}>
+      <p className="resistor-form__label">Input parameters</p>
       <label className="resistor-form__field">
         <span>Available resistor values (Ω, comma or newline separated)</span>
         <textarea
@@ -65,7 +66,7 @@ function ResistorForm({ onCalculate }: Props) {
       </label>
       {error && <p className="resistor-form__error">{error}</p>}
       <button className="resistor-form__button" type="submit">
-        Calculate
+        &gt; Calculate
       </button>
     </form>
   );

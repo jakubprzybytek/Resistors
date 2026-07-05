@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Blueprint</title>
+<style>
+  :root {
+    --bg: #0b3d66;
+    --bg-2: #0a3559;
+    --surface: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.28);
+    --text: #e6f4ff;
+    --text-dim: #9fc8e8;
+    --accent: #7dd3fc;
+    --accent-2: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 16px 16px, 16px 16px, 80px 80px, 80px 80px;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .app { width: 100%; max-width: 560px; }
+  .app__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .app__subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin: 0 0 2rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    backdrop-filter: blur(2px);
+  }
+  .card__label { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
+  .field span { font-size: 0.75rem; color: var(--text-dim); }
+  textarea, input {
+    font: inherit;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 3px;
+    padding: 0.6rem 0.7rem;
+    resize: vertical;
+  }
+  textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+  button {
+    width: 100%;
+    padding: 0.7rem;
+    font: inherit;
+    font-weight: 700;
+    background: transparent;
+    color: var(--accent-2);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  button:hover { background: rgba(125,211,252,0.15); }
+  .result__status {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    margin-bottom: 0.9rem;
+  }
+  .result__value { font-size: 1.8rem; font-weight: 700; margin: 0 0 0.25rem; }
+  .result__deviation { color: var(--text-dim); margin: 0 0 0.9rem; font-size: 0.85rem; }
+  .result__description {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.6rem 0.8rem;
+    color: var(--accent);
+    font-size: 0.9rem;
+    word-break: break-word;
+  }
+  .swatches { display: flex; gap: 8px; margin-top: 1.5rem; justify-content: center; }
+  .swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1 class="app__title">Resistor Network Calculator</h1>
+    <p class="app__subtitle">// find a resistor combination that hits your target</p>
+
+    <div class="card">
+      <p class="card__label">Input parameters</p>
+      <label class="field">
+        <span>AVAILABLE_VALUES (Ω)</span>
+        <textarea rows="4">100, 220, 330</textarea>
+      </label>
+      <label class="field">
+        <span>TARGET_RESISTANCE (Ω)</span>
+        <input type="text" value="660" />
+      </label>
+      <button>&gt; Calculate</button>
+    </div>
+
+    <div class="card">
+      <span class="result__status">Match: exact</span>
+      <p class="result__value">660.00 Ω</p>
+      <p class="result__deviation">2 resistors · deviation +0.00%</p>
+      <p class="result__description">(330Ω + 330Ω)</p>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch" style="background:#0b3d66"></div>
+      <div class="swatch" style="background:#7dd3fc"></div>
+      <div class="swatch" style="background:#ffffff"></div>
+      <div class="swatch" style="background:#9fc8e8"></div>
+    </div>
+  </div>
+</body>
+</html>
