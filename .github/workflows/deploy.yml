@@ -30,7 +30,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Deploy to int
-        run: npx sst deploy --stage int
+        run: npm run sst:deploy:int -- --print-logs
 
     #   - name: Install Playwright browsers
     #     run: npx playwright install --with-deps

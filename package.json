@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "sst:dev": "sst dev",
-    "sst:deploy": "sst deploy"
+    "sst:deploy": "sst deploy",
+    "sst:deploy:int": "sst deploy --stage int"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
