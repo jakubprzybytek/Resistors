@@ -1,0 +1,31 @@
+.result-card {
+  padding: 1rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  background: #f7fafc;
+
+  &--empty {
+    color: #718096;
+  }
+
+  &__status {
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+
+  &__value {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  &__deviation {
+    margin: 0 0 0.5rem;
+    color: #4a5568;
+  }
+
+  &__description {
+    margin: 0;
+    font-family: monospace;
+    word-break: break-word;
+  }
+}

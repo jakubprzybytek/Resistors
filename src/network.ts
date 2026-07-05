@@ -15,7 +15,7 @@ interface Options {
   dedupPrecision?: number;
 }
 
-interface SearchResult {
+export interface SearchResult {
   found: boolean;     // true if within tolerance of target
   node: Node;
   count: number;      // resistors used

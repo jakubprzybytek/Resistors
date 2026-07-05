@@ -1,4 +1,4 @@
-import { findResistorNetworkUnlimited } from "./network.js";
+import { findResistorNetworkUnlimited } from "./src/network.js";
 
 const set = [
   1,
