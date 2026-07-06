@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test("calculates a resistor network for a target value", async ({ page }) => {
   await page.goto("/");
 
+  await page.getByRole("tab", { name: "Custom", exact: true }).click();
   await page.getByPlaceholder(/100, 220, 330/).fill("100, 220, 330");
   await page.getByPlaceholder("660").fill("660");
   await page.getByRole("button", { name: /calculate/i }).click();

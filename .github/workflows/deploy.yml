@@ -32,8 +32,8 @@ jobs:
       - name: Deploy to Int
         run: npm run sst:deploy:int -- --print-logs
 
-    #   - name: Install Playwright browsers
-    #     run: npx playwright install --with-deps
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
 
-    #   - name: Run e2e tests
-    #     run: npm run test:e2e
+      - name: Run e2e tests against int
+        run: npm run test:e2e:int

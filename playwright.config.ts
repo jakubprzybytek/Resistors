@@ -1,19 +1,24 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const baseURL = process.env.BASE_URL ?? "http://localhost:4173";
+const useLocalPreview = !process.env.BASE_URL;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   reporter: "list",
   use: {
-    baseURL: "http://localhost:4173",
+    baseURL,
     trace: "on-first-retry"
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } }
   ],
-  webServer: {
-    command: "npm run preview -- --port 4173",
-    url: "http://localhost:4173",
-    reuseExistingServer: !process.env.CI
-  }
+  webServer: useLocalPreview
+    ? {
+      command: "npm run preview -- --port 4173",
+      url: "http://localhost:4173",
+      reuseExistingServer: !process.env.CI
+    }
+    : undefined
 });

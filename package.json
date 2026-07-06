@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:int": "BASE_URL=https://resistors.albedoonline.com playwright test",
     "sst:dev": "sst dev",
     "sst:deploy": "sst deploy",
     "sst:deploy:int": "sst deploy --stage int",
