@@ -30,6 +30,13 @@ describe("findResistorNetworkUnlimited", () => {
     expect(result!.description).toContain("+");
   });
 
+  it("omits redundant parentheses for chained same-operator expressions", () => {
+    const result = findResistorNetworkUnlimited([100], 300, { relTolerance: 0.001, maxResistors: 3 });
+    expect(result).not.toBeNull();
+    expect(result!.found).toBe(true);
+    expect(result!.description).toBe("100Ω + 100Ω + 100Ω");
+  });
+
   it("combines two resistors in parallel to hit the target", () => {
     // 100 ∥ 100 = 50
     const result = findResistorNetworkUnlimited([100], 50, { relTolerance: 0.001 });

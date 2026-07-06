@@ -31,10 +31,19 @@ function bucketKey(value: number, relPrecision: number): number {
   return Math.round(Math.log(value) / relPrecision);
 }
 
-function describe(node: Node): string {
+function describe(node: Node, parentKind?: "series" | "parallel"): string {
   if (node.kind === "leaf") return `${node.value}Ω`;
+
   const op = node.kind === "series" ? " + " : " ∥ ";
-  return `(${describe(node.left)}${op}${describe(node.right)})`;
+  const left = describe(node.left, node.kind);
+  const right = describe(node.right, node.kind);
+  const expr = `${left}${op}${right}`;
+
+  // Parentheses are only needed when mixing operators.
+  if (parentKind && parentKind !== node.kind) {
+    return `(${expr})`;
+  }
+  return expr;
 }
 
 // ----- Main -----
