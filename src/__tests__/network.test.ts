@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { findResistorNetworkUnlimited } from "../network.js";
+import { findAllResistorNetworks, findResistorNetworkUnlimited } from "../network.js";
 
 describe("findResistorNetworkUnlimited", () => {
   it("returns null for an empty resistor set", () => {
@@ -70,5 +70,43 @@ describe("findResistorNetworkUnlimited", () => {
     // 220 alone is within 1% tolerance of 220, so it must win over any multi-resistor combo.
     const result = findResistorNetworkUnlimited([220, 100], 220, { relTolerance: 0.01 });
     expect(result!.count).toBe(1);
+  });
+});
+
+describe("findAllResistorNetworks", () => {
+  it("returns every matching result within the tolerance band", () => {
+    const results = findAllResistorNetworks([100, 200, 300], 300, { relTolerance: 0.05 });
+
+    expect(results.length).toBeGreaterThanOrEqual(3);
+    expect(results.map((result) => result.description)).toEqual(
+      expect.arrayContaining([
+        "300Ω",
+        "100Ω + 200Ω",
+        "100Ω + 100Ω + 100Ω",
+      ])
+    );
+  });
+
+  it("keeps results within the 5 resistor search cap", () => {
+    const results = findAllResistorNetworks([100], 500, { relTolerance: 0.05, maxResistors: 5 });
+
+    expect(results.length).toBeGreaterThan(0);
+    for (const result of results) {
+      expect(result.count).toBeLessThanOrEqual(5);
+      expect(result.absError).toBeLessThanOrEqual(25);
+    }
+  });
+
+  it("returns an empty list when nothing falls inside the tolerance band", () => {
+    expect(findAllResistorNetworks([100], 1000, { relTolerance: 0.01, maxResistors: 2 })).toEqual(
+      []
+    );
+  });
+
+  it("does not duplicate the same combination", () => {
+    const results = findAllResistorNetworks([100, 200, 300], 300, { relTolerance: 0.05 });
+    const descriptions = results.map((result) => result.description);
+
+    expect(new Set(descriptions).size).toBe(descriptions.length);
   });
 });

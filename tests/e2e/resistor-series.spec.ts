@@ -21,9 +21,9 @@ for (const { name, firstRow, targets } of PREDEFINED_TABS) {
       await page.getByPlaceholder("660").fill(String(target));
       await page.getByRole("button", { name: /calculate/i }).click();
 
-      const status = page.getByRole("status");
-      await expect(status).toBeVisible();
-      await expect(status).toContainText(/Ω/);
+      const listItems = page.getByRole("listitem");
+      await expect(listItems.first()).toBeVisible();
+      await expect(listItems.first()).toContainText(/Ω/);
     }
   });
 }
@@ -36,9 +36,9 @@ test("Custom tab accepts comma-separated values without suffixes", async ({ page
   await page.getByPlaceholder("660").fill("660");
   await page.getByRole("button", { name: /calculate/i }).click();
 
-  const status = page.getByRole("status");
-  await expect(status).toContainText("660.00Ω");
-  await expect(status).toContainText("330Ω + 330Ω");
+  const listItems = page.getByRole("listitem");
+  await expect(listItems.first()).toContainText("660.00Ω");
+  await expect(page.getByText("330Ω + 330Ω")).toBeVisible();
 });
 
 test("Custom tab accepts newline-separated values", async ({ page }) => {
@@ -49,8 +49,7 @@ test("Custom tab accepts newline-separated values", async ({ page }) => {
   await page.getByPlaceholder("660").fill("330");
   await page.getByRole("button", { name: /calculate/i }).click();
 
-  const status = page.getByRole("status");
-  await expect(status).toContainText(/Ω/);
+  await expect(page.getByRole("listitem").first()).toContainText(/Ω/);
 });
 
 test("Custom tab accepts values with k/M suffixes, with and without spaces", async ({ page }) => {
@@ -61,9 +60,8 @@ test("Custom tab accepts values with k/M suffixes, with and without spaces", asy
   await page.getByPlaceholder("660").fill("4700");
   await page.getByRole("button", { name: /calculate/i }).click();
 
-  const status = page.getByRole("status");
-  await expect(status).toContainText("4700.00Ω");
-  await expect(status).toContainText("4700");
+  await expect(page.getByRole("listitem").first()).toContainText("4700.00Ω");
+  await expect(page.getByRole("listitem").first()).toContainText("4700");
 });
 
 test("Custom tab blocks calculation and reports invalid tokens", async ({ page }) => {

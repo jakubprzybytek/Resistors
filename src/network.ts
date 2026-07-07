@@ -1,8 +1,15 @@
 // ----- Types -----
 
 type Node =
-  | { kind: "leaf"; value: number }
-  | { kind: "series" | "parallel"; value: number; left: Node; right: Node };
+  | { kind: "leaf"; value: number; description: string; signature: string }
+  | {
+    kind: "series" | "parallel";
+    value: number;
+    left: Node;
+    right: Node;
+    description: string;
+    signature: string;
+  };
 
 interface Options {
   /** relative tolerance for accepting a match, e.g. 0.01 = 1% */
@@ -24,6 +31,15 @@ export interface SearchResult {
   description: string;
 }
 
+export interface NetworkResult {
+  node: Node;
+  count: number;
+  value: number;
+  absError: number;
+  deviationPct: number;
+  description: string;
+}
+
 // ----- Helpers -----
 
 // Logarithmic bucketing => relative dedup across orders of magnitude.
@@ -31,19 +47,47 @@ function bucketKey(value: number, relPrecision: number): number {
   return Math.round(Math.log(value) / relPrecision);
 }
 
-function describe(node: Node, parentKind?: "series" | "parallel"): string {
-  if (node.kind === "leaf") return `${node.value}Ω`;
-
-  const op = node.kind === "series" ? " + " : " ∥ ";
-  const left = describe(node.left, node.kind);
-  const right = describe(node.right, node.kind);
-  const expr = `${left}${op}${right}`;
-
-  // Parentheses are only needed when mixing operators.
-  if (parentKind && parentKind !== node.kind) {
-    return `(${expr})`;
+function formatChild(node: Node, parentKind: "series" | "parallel"): string {
+  if (node.kind === "leaf" || node.kind === parentKind) {
+    return node.description;
   }
-  return expr;
+
+  return `(${node.description})`;
+}
+
+function makeLeaf(value: number): Node {
+  return {
+    kind: "leaf",
+    value,
+    description: `${value}Ω`,
+    signature: `leaf:${value}`,
+  };
+}
+
+function makeComposite(kind: "series" | "parallel", left: Node, right: Node, value: number): Node {
+  const [first, second] = left.signature <= right.signature ? [left, right] : [right, left];
+  const op = kind === "series" ? " + " : " ∥ ";
+
+  return {
+    kind,
+    value,
+    left: first,
+    right: second,
+    description: `${formatChild(first, kind)}${op}${formatChild(second, kind)}`,
+    signature: `${kind}:${first.signature}|${second.signature}`,
+  };
+}
+
+function toNetworkResult(node: Node, target: number, count: number): NetworkResult {
+  const absError = Math.abs(node.value - target);
+  return {
+    node,
+    count,
+    value: node.value,
+    absError,
+    deviationPct: ((node.value - target) / target) * 100,
+    description: node.description,
+  };
 }
 
 // ----- Main -----
@@ -81,7 +125,7 @@ export function findResistorNetworkUnlimited(
       (error === closest.error && count < closest.count)) {
       closest = {
         found: false, node, count, value: node.value, error,
-        description: describe(node)
+        description: node.description
       };
     }
     if (matches(node.value) &&
@@ -89,7 +133,7 @@ export function findResistorNetworkUnlimited(
         (count === best.count && error < best.error))) {
       best = {
         found: true, node, count, value: node.value, error,
-        description: describe(node)
+        description: node.description
       };
     }
   };
@@ -99,7 +143,7 @@ export function findResistorNetworkUnlimited(
     const key = bucketKey(v, dedupPrec);
     if (!known.has(key)) {
       known.add(key);
-      const node: Node = { kind: "leaf", value: v };
+      const node = makeLeaf(v);
       layers[1].push(node);
       consider(node, 1);
     }
@@ -111,7 +155,7 @@ export function findResistorNetworkUnlimited(
     const key = bucketKey(value, dedupPrec);
     if (known.has(key)) return;          // already reachable with <= k resistors
     known.add(key);
-    const node: Node = { kind, value, left: a, right: b };
+    const node = makeComposite(kind, a, b, value);
     layers[k].push(node);
     consider(node, k);
   };
@@ -139,4 +183,141 @@ export function findResistorNetworkUnlimited(
   }
 
   return best ?? closest;
+}
+
+const EXPANSION_BUCKET_PRECISION = 0.02;
+const MAX_LAYER_EXPANSION_NODES = 256;
+const MAX_BUCKET_EXPANSION_REPRESENTATIVES = 4;
+
+function pruneExpansionLayer(nodes: Node[], target: number): Node[] {
+  const kept: Node[] = [];
+  const bucketCounts = new Map<number, number>();
+
+  const sorted = [...nodes].sort((left, right) => {
+    const leftError = Math.abs(left.value - target);
+    const rightError = Math.abs(right.value - target);
+    return leftError - rightError || left.value - right.value || left.signature.localeCompare(right.signature);
+  });
+
+  for (const node of sorted) {
+    const key = bucketKey(node.value, EXPANSION_BUCKET_PRECISION);
+    const bucketCount = bucketCounts.get(key) ?? 0;
+    if (bucketCount >= MAX_BUCKET_EXPANSION_REPRESENTATIVES) continue;
+
+    bucketCounts.set(key, bucketCount + 1);
+    kept.push(node);
+
+    if (kept.length >= MAX_LAYER_EXPANSION_NODES) {
+      break;
+    }
+  }
+
+  return kept;
+}
+
+export function findAllResistorNetworks(
+  resistors: number[],
+  target: number,
+  opts: Options = {}
+): NetworkResult[] {
+  if (resistors.length === 0 || target <= 0) return [];
+
+  const relTol = opts.relTolerance ?? 0.05;
+  const absTol = opts.absTolerance ?? 0;
+  const maxK = opts.maxResistors ?? 5;
+  const dedupPrec = opts.dedupPrecision ?? 1e-6;
+  const tol = Math.max(absTol, relTol * target);
+  const matches = (value: number) => Math.abs(value - target) <= tol;
+
+  const distinct = new Map<number, number>();
+  for (const resistor of resistors) {
+    if (resistor > 0) {
+      distinct.set(bucketKey(resistor, dedupPrec), resistor);
+    }
+  }
+
+  const layers: Node[][] = Array.from({ length: maxK + 1 }, () => []);
+  const seenResults = new Set<string>();
+  const results: NetworkResult[] = [];
+
+  const collectResult = (node: Node, count: number) => {
+    if (!matches(node.value) || seenResults.has(node.description)) return;
+    seenResults.add(node.description);
+    results.push(toNetworkResult(node, target, count));
+  };
+
+  for (const value of distinct.values()) {
+    const node = makeLeaf(value);
+    collectResult(node, 1);
+    layers[1].push(node);
+  }
+
+  const registerComposite = (
+    value: number,
+    kind: "series" | "parallel",
+    left: Node,
+    right: Node,
+    count: number
+  ) => {
+    const node = makeComposite(kind, left, right, value);
+    collectResult(node, count);
+    layers[count].push(node);
+  };
+
+  const combine = (left: Node, right: Node, count: number) => {
+    const seriesValue = left.value + right.value;
+    registerComposite(seriesValue, "series", left, right, count);
+
+    const parallelValue = (left.value * right.value) / seriesValue;
+    registerComposite(parallelValue, "parallel", left, right, count);
+  };
+
+  for (let count = 2; count <= maxK; count++) {
+    const nextLayer: Node[] = [];
+    layers[count] = nextLayer;
+
+    const registerCompositeForLayer = (
+      value: number,
+      kind: "series" | "parallel",
+      left: Node,
+      right: Node
+    ) => {
+      const node = makeComposite(kind, left, right, value);
+      collectResult(node, count);
+      nextLayer.push(node);
+    };
+
+    const combineForLayer = (left: Node, right: Node) => {
+      const seriesValue = left.value + right.value;
+      registerCompositeForLayer(seriesValue, "series", left, right);
+
+      const parallelValue = (left.value * right.value) / seriesValue;
+      registerCompositeForLayer(parallelValue, "parallel", left, right);
+    };
+
+    for (let leftCount = 1; leftCount <= count - leftCount; leftCount++) {
+      const rightCount = count - leftCount;
+      const leftLayer = layers[leftCount];
+      const rightLayer = layers[rightCount];
+
+      if (leftCount < rightCount) {
+        for (const left of leftLayer) {
+          for (const right of rightLayer) {
+            combineForLayer(left, right);
+          }
+        }
+        continue;
+      }
+
+      for (let leftIndex = 0; leftIndex < leftLayer.length; leftIndex++) {
+        for (let rightIndex = leftIndex; rightIndex < leftLayer.length; rightIndex++) {
+          combineForLayer(leftLayer[leftIndex], leftLayer[rightIndex]);
+        }
+      }
+    }
+
+    layers[count] = pruneExpansionLayer(nextLayer, target);
+  }
+
+  return results;
 }
