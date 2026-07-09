@@ -1,6 +1,6 @@
 // ----- Types -----
 
-type Node =
+export type Node =
   | { kind: "leaf"; value: number; description: string; signature: string }
   | {
     kind: "series" | "parallel";
@@ -42,9 +42,37 @@ export interface NetworkResult {
 
 // ----- Helpers -----
 
+export const VALUE_ROUNDING_PRECISION_DIGITS = 9;
+export const COMPARISON_EPSILON = 10 ** -VALUE_ROUNDING_PRECISION_DIGITS;
+
+export function roundComparableValue(value: number): number {
+  return Number(value.toFixed(VALUE_ROUNDING_PRECISION_DIGITS));
+}
+
 // Logarithmic bucketing => relative dedup across orders of magnitude.
 function bucketKey(value: number, relPrecision: number): number {
   return Math.round(Math.log(value) / relPrecision);
+}
+
+function flattenByKind(node: Node, kind: "series" | "parallel"): Node[] {
+  if (node.kind !== kind) {
+    return [node];
+  }
+
+  return [...flattenByKind(node.left, kind), ...flattenByKind(node.right, kind)];
+}
+
+export function canonicalKey(node: Node): string {
+  if (node.kind === "leaf") {
+    return `L(${roundComparableValue(node.value)})`;
+  }
+
+  const children = flattenByKind(node, node.kind)
+    .map((child) => canonicalKey(child))
+    .sort((left, right) => left.localeCompare(right));
+
+  const kindPrefix = node.kind === "series" ? "S" : "P";
+  return `${kindPrefix}(${children.join(",")})`;
 }
 
 function formatChild(node: Node, parentKind: "series" | "parallel"): string {
