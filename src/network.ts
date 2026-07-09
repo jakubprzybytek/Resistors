@@ -1,3 +1,5 @@
+import { formatValue } from "./resistorValueTokens.js";
+
 // ----- Types -----
 
 export type Node =
@@ -87,14 +89,14 @@ function makeLeaf(value: number): Node {
   return {
     kind: "leaf",
     value,
-    description: `${value}Ω`,
+    description: formatValue(value),
     signature: `leaf:${value}`,
   };
 }
 
 function makeComposite(kind: "series" | "parallel", left: Node, right: Node, value: number): Node {
   const [first, second] = left.signature <= right.signature ? [left, right] : [right, left];
-  const op = kind === "series" ? " + " : " ∥ ";
+  const op = kind === "series" ? " + " : " || ";
 
   return {
     kind,

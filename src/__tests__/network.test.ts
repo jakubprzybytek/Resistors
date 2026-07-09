@@ -22,7 +22,13 @@ describe("findResistorNetworkUnlimited", () => {
     expect(result!.found).toBe(true);
     expect(result!.count).toBe(1);
     expect(result!.value).toBe(220);
-    expect(result!.description).toBe("220Ω");
+    expect(result!.description).toBe("220");
+  });
+
+  it("formats detailed descriptions with suffix tokens", () => {
+    const result = findResistorNetworkUnlimited([4700], 4700);
+    expect(result).not.toBeNull();
+    expect(result!.description).toBe("4.7k");
   });
 
   it("combines two resistors in series to hit the target", () => {
@@ -39,7 +45,7 @@ describe("findResistorNetworkUnlimited", () => {
     const result = findResistorNetworkUnlimited([100], 300, { relTolerance: 0.001, maxResistors: 3 });
     expect(result).not.toBeNull();
     expect(result!.found).toBe(true);
-    expect(result!.description).toBe("100Ω + 100Ω + 100Ω");
+    expect(result!.description).toBe("100 + 100 + 100");
   });
 
   it("combines two resistors in parallel to hit the target", () => {
@@ -49,7 +55,7 @@ describe("findResistorNetworkUnlimited", () => {
     expect(result!.found).toBe(true);
     expect(result!.count).toBe(2);
     expect(result!.value).toBeCloseTo(50, 5);
-    expect(result!.description).toContain("∥");
+    expect(result!.description).toContain("||");
   });
 
   it("respects relative tolerance when deciding a match", () => {
@@ -85,9 +91,9 @@ describe("findAllResistorNetworks", () => {
     expect(results.length).toBeGreaterThanOrEqual(3);
     expect(results.map((result) => result.description)).toEqual(
       expect.arrayContaining([
-        "300Ω",
-        "100Ω + 200Ω",
-        "100Ω + 100Ω + 100Ω",
+        "300",
+        "100 + 200",
+        "100 + 100 + 100",
       ])
     );
   });

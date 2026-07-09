@@ -37,8 +37,8 @@ test("Custom tab accepts comma-separated values without suffixes", async ({ page
   await page.getByRole("button", { name: /calculate/i }).click();
 
   const listItems = page.getByRole("listitem");
-  await expect(listItems.first()).toContainText("660.00Ω");
-  await expect(page.getByText("330Ω + 330Ω")).toBeVisible();
+  await expect(listItems.first()).toContainText("660Ω");
+  await expect(page.getByText("330 + 330")).toBeVisible();
 });
 
 test("Custom tab accepts newline-separated values", async ({ page }) => {
@@ -60,8 +60,8 @@ test("Custom tab accepts values with k/M suffixes, with and without spaces", asy
   await page.getByPlaceholder("660").fill("4700");
   await page.getByRole("button", { name: /calculate/i }).click();
 
-  await expect(page.getByRole("listitem").first()).toContainText("4700.00Ω");
-  await expect(page.getByRole("listitem").first()).toContainText("4700");
+  await expect(page.getByRole("listitem").first()).toContainText("4700Ω");
+  await expect(page.getByRole("listitem").first()).toContainText("4.7k");
 });
 
 test("Custom tab blocks calculation and reports invalid tokens", async ({ page }) => {

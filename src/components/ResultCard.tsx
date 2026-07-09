@@ -6,14 +6,7 @@ interface Props {
 }
 
 function formatResistorValue(value: number): string {
-  const fmt = (v: number) => v.toFixed(2).replace(/\.?0+$/, "");
-  if (value >= 1_000_000) {
-    return `${fmt(value / 1_000_000)}MΩ`;
-  } else if (value >= 1000) {
-    return `${fmt(value / 1000)}kΩ`;
-  } else {
-    return `${fmt(value)}Ω`;
-  }
+  return `${Math.round(value)}Ω`;
 }
 
 function ResultCard({ result }: Props) {
