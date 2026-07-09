@@ -7,7 +7,6 @@ import "./App.scss";
 
 function App() {
   const [model, setModel] = useState<RankingModel | null>(null);
-  const [target, setTarget] = useState<number>(0);
   const [hasCalculated, setHasCalculated] = useState(false);
   const [calcId, setCalcId] = useState(0);
 
@@ -21,9 +20,7 @@ function App() {
 
     console.log(`Found results: ${found.length}`);
     console.log(`Computation time: ${durationMs.toFixed(2)}ms`);
-
     setModel(buildRankingModel(found, { relTolerance: 0.05, target: targetValue }));
-    setTarget(targetValue);
     setHasCalculated(true);
     setCalcId((current) => current + 1);
   };
@@ -33,7 +30,7 @@ function App() {
       <h1 className="app__title">Resistor Network Calculator</h1>
       <p className="app__subtitle">// find a resistor combination that hits your target</p>
       <ResistorForm onCalculate={handleCalculate} />
-      {hasCalculated && <RankingView key={calcId} model={model} target={target} />}
+      {hasCalculated && <RankingView key={calcId} model={model} />}
     </main>
   );
 }

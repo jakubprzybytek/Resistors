@@ -14,46 +14,62 @@ function makeResult(value: number, absError: number): NetworkResult {
   };
 }
 
+function expectComputedValue(value: string) {
+  expect(document.querySelector(".result-card__value")).toHaveTextContent(value);
+}
+
 describe("ResultCard", () => {
   it("formats value at the 1kΩ boundary as a whole number without suffixes", () => {
     render(<ResultCard result={makeResult(1000, 0)} />);
 
-    expect(screen.getByText("1000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=1000Ω");
   });
 
   it("formats values below 1kΩ without suffix", () => {
     render(<ResultCard result={makeResult(470, 0)} />);
 
-    expect(screen.getByText("470Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=470Ω");
   });
 
   it("formats values in kΩ range without suffixes", () => {
     render(<ResultCard result={makeResult(4700, 0)} />);
 
-    expect(screen.getByText("4700Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=4700Ω");
   });
 
   it("formats values in MΩ range without suffixes", () => {
     render(<ResultCard result={makeResult(2_200_000, 0)} />);
 
-    expect(screen.getByText("2200000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=2200000Ω");
   });
 
   it("rounds displayed values to whole ohms", () => {
     render(<ResultCard result={makeResult(1000.49, 0.49)} />);
 
-    expect(screen.getByText("1000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=1000Ω");
   });
 
   it("shows exact match status for zero error", () => {
     render(<ResultCard result={makeResult(1000, 0)} />);
 
-    expect(screen.getByText("Exact match")).toBeInTheDocument();
+    expect(screen.getByText("Exact Match")).toHaveClass("result-card__status--exact");
   });
 
-  it("shows approximate match status for non-zero error", () => {
+  it("shows blue approximate status for errors below 1%", () => {
     render(<ResultCard result={makeResult(1000.05, 0.05)} />);
 
-    expect(screen.getByText("Approximate match (within 5%)")).toBeInTheDocument();
+    expect(screen.getByText("Approximate match")).toHaveClass("result-card__status--near");
+  });
+
+  it("shows orange approximate status for errors of 1% or more", () => {
+    render(<ResultCard result={makeResult(1010, 10)} />);
+
+    expect(screen.getByText("Approximate match")).toHaveClass("result-card__status--wide");
+  });
+
+  it("shows deviation inside the result card", () => {
+    render(<ResultCard result={makeResult(1000.005, 0.005)} />);
+
+    expect(screen.getByText("Deviation: +<0.01%")).toBeInTheDocument();
   });
 });

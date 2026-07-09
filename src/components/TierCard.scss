@@ -24,18 +24,12 @@
     letter-spacing: 0.06em;
   }
 
-  &__deviation {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--bp-text-dim);
-  }
-
   &__controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(2.5rem, max-content) auto minmax(2.5rem, max-content);
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+    column-gap: 0.75rem;
   }
 
   &__arrow {
@@ -72,19 +66,6 @@
   .tier-card {
     &__title {
       font-size: 0.9rem;
-    }
-
-    &__controls {
-      justify-content: space-between;
-    }
-
-    &__arrow {
-      flex: 0 0 auto;
-    }
-
-    &__position {
-      order: -1;
-      width: 100%;
     }
   }
 }

@@ -7,25 +7,9 @@ interface Props {
   position: number;
   onPrev: () => void;
   onNext: () => void;
-  target: number;
 }
 
-function formatDeviation(value: number): string {
-  if (Object.is(value, 0)) {
-    return "0.00%";
-  }
-
-  const sign = value >= 0 ? "+" : "-";
-  const abs = Math.abs(value);
-
-  if (abs > 0 && abs < 0.01) {
-    return `${sign}<0.01%`;
-  }
-
-  return `${sign}${abs.toFixed(2)}%`;
-}
-
-function TierCard({ tier, position, onPrev, onNext, target }: Props) {
+function TierCard({ tier, position, onPrev, onNext }: Props) {
   const currentResult = tier.results[position];
   const hasPrev = position > 0;
   const hasNext = position < tier.results.length - 1;
@@ -36,7 +20,6 @@ function TierCard({ tier, position, onPrev, onNext, target }: Props) {
         <h2 className="tier-card__title">
           {tier.count} resistor{tier.count === 1 ? "" : "s"}
         </h2>
-        <p className="tier-card__deviation">Deviation: {formatDeviation(currentResult.deviationPct)}</p>
       </header>
 
       <ResultCard result={currentResult} />

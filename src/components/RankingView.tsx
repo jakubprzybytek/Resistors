@@ -5,10 +5,9 @@ import "./RankingView.scss";
 
 interface Props {
   model: RankingModel | null;
-  target: number;
 }
 
-function RankingView({ model, target }: Props) {
+function RankingView({ model }: Props) {
   if (!model || model.tiers.length === 0) {
     return (
       <div className="result-card result-card--empty ranking-view__empty" role="status">
@@ -59,7 +58,6 @@ function RankingView({ model, target }: Props) {
               position={position}
               onPrev={() => movePosition(index, -1)}
               onNext={() => movePosition(index, 1)}
-              target={target}
             />
           );
         })}

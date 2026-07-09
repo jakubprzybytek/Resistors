@@ -31,7 +31,7 @@ const MODEL: RankingModel = {
 
 describe("RankingView", () => {
   it("renders only the anchor tier initially", () => {
-    render(<RankingView model={MODEL} target={100} />);
+    render(<RankingView model={MODEL} />);
 
     expect(screen.getByRole("heading", { name: "3 resistors" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "5 resistors" })).not.toBeInTheDocument();
@@ -42,7 +42,7 @@ describe("RankingView", () => {
 
   it("reveals adjacent tiers and keeps already shown tiers visible", async () => {
     const user = userEvent.setup();
-    render(<RankingView model={MODEL} target={100} />);
+    render(<RankingView model={MODEL} />);
 
     await user.click(screen.getByRole("button", { name: /show more accurate/i }));
     expect(screen.getByRole("heading", { name: "5 resistors" })).toBeInTheDocument();
@@ -56,12 +56,12 @@ describe("RankingView", () => {
   });
 
   it("renders empty state when model is missing or has no tiers", () => {
-    const { rerender } = render(<RankingView model={null} target={100} />);
+    const { rerender } = render(<RankingView model={null} />);
 
     expect(screen.getByRole("status")).toHaveTextContent(/no results could be determined/i);
     expect(screen.queryByRole("button", { name: /show simpler/i })).not.toBeInTheDocument();
 
-    rerender(<RankingView model={{ anchorIndex: 0, tiers: [] }} target={100} />);
+    rerender(<RankingView model={{ anchorIndex: 0, tiers: [] }} />);
     expect(screen.getByRole("status")).toHaveTextContent(/no results could be determined/i);
   });
 });

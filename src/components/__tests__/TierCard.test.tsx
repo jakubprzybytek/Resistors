@@ -28,7 +28,7 @@ const TIER: TierCardModel = {
 
 describe("TierCard", () => {
   it("starts at first result and disables previous arrow", () => {
-    render(<TierCard tier={TIER} position={0} onPrev={vi.fn()} onNext={vi.fn()} target={100} />);
+    render(<TierCard tier={TIER} position={0} onPrev={vi.fn()} onNext={vi.fn()} />);
 
     expect(screen.getByText("best")).toBeInTheDocument();
     expect(screen.getByText("1 / 3")).toBeInTheDocument();
@@ -40,14 +40,12 @@ describe("TierCard", () => {
     const user = userEvent.setup();
     const onPrev = vi.fn();
     const onNext = vi.fn();
-    const { rerender } = render(
-      <TierCard tier={TIER} position={0} onPrev={onPrev} onNext={onNext} target={100} />
-    );
+    const { rerender } = render(<TierCard tier={TIER} position={0} onPrev={onPrev} onNext={onNext} />);
 
     await user.click(screen.getByRole("button", { name: /next configuration/i }));
     expect(onNext).toHaveBeenCalledTimes(1);
 
-    rerender(<TierCard tier={TIER} position={1} onPrev={onPrev} onNext={onNext} target={100} />);
+    rerender(<TierCard tier={TIER} position={1} onPrev={onPrev} onNext={onNext} />);
     expect(screen.getByText("alt-1")).toBeInTheDocument();
     expect(screen.getByText("2 / 3")).toBeInTheDocument();
 
@@ -56,7 +54,7 @@ describe("TierCard", () => {
   });
 
   it("disables next arrow at the end", () => {
-    render(<TierCard tier={TIER} position={2} onPrev={vi.fn()} onNext={vi.fn()} target={100} />);
+    render(<TierCard tier={TIER} position={2} onPrev={vi.fn()} onNext={vi.fn()} />);
 
     expect(screen.getByText("alt-2")).toBeInTheDocument();
     expect(screen.getByText("3 / 3")).toBeInTheDocument();
