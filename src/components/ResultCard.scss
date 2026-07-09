@@ -23,7 +23,7 @@
     margin: 0 0 0.9rem;
 
     &--exact {
-      background: #4ade80;
+      background: var(--bp-success);
     }
 
     &--near {
@@ -31,7 +31,7 @@
     }
 
     &--wide {
-      background: #fb923c;
+      background: var(--bp-warning);
     }
   }
 

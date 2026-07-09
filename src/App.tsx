@@ -21,7 +21,6 @@ function App() {
     console.log(`Found results: ${found.length}`);
     console.log(`Computation time: ${durationMs.toFixed(2)}ms`);
     setModel(buildRankingModel(found, { relTolerance: 0.05, target: targetValue }));
-    setModel(buildRankingModel(found, { relTolerance: 0.05, target: targetValue }));
     setHasCalculated(true);
     setCalcId((current) => current + 1);
   };
