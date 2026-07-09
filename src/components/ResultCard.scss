@@ -23,16 +23,10 @@
   }
 
   &__value {
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.9rem;
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--bp-text);
-  }
-
-  &__deviation {
-    margin: 0 0 0.9rem;
-    color: var(--bp-text-dim);
-    font-size: 0.85rem;
   }
 
   &__description {

@@ -39,7 +39,7 @@ function TierCard({ tier, position, onPrev, onNext, target }: Props) {
         <p className="tier-card__deviation">Deviation: {formatDeviation(currentResult.deviationPct)}</p>
       </header>
 
-      <ResultCard result={currentResult} target={target} />
+      <ResultCard result={currentResult} />
 
       <div className="tier-card__controls">
         <button

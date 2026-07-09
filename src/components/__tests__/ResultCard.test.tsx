@@ -15,15 +15,39 @@ function makeResult(value: number, absError: number): NetworkResult {
 }
 
 describe("ResultCard", () => {
-  it("shows <0.01% for non-exact deviations that round to 0.00%", () => {
-    render(<ResultCard result={makeResult(1000.05, 0.05)} target={1000} />);
+  it("formats value at the 1kΩ boundary with k suffix", () => {
+    render(<ResultCard result={makeResult(1000, 0)} />);
 
-    expect(screen.getByText("Deviation: +<0.01%")).toBeInTheDocument();
+    expect(screen.getByText("1kΩ", { selector: ".result-card__value" })).toBeInTheDocument();
   });
 
-  it("keeps 0.00% for an exact match", () => {
-    render(<ResultCard result={makeResult(1000, 0)} target={1000} />);
+  it("formats values below 1kΩ without suffix", () => {
+    render(<ResultCard result={makeResult(470, 0)} />);
 
-    expect(screen.getByText("Deviation: +0.00%")).toBeInTheDocument();
+    expect(screen.getByText("470Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+  });
+
+  it("formats values in kΩ range with k suffix", () => {
+    render(<ResultCard result={makeResult(4700, 0)} />);
+
+    expect(screen.getByText("4.7kΩ", { selector: ".result-card__value" })).toBeInTheDocument();
+  });
+
+  it("formats values in MΩ range with M suffix", () => {
+    render(<ResultCard result={makeResult(2_200_000, 0)} />);
+
+    expect(screen.getByText("2.2MΩ", { selector: ".result-card__value" })).toBeInTheDocument();
+  });
+
+  it("shows exact match status for zero error", () => {
+    render(<ResultCard result={makeResult(1000, 0)} />);
+
+    expect(screen.getByText("Exact match")).toBeInTheDocument();
+  });
+
+  it("shows approximate match status for non-zero error", () => {
+    render(<ResultCard result={makeResult(1000.05, 0.05)} />);
+
+    expect(screen.getByText("Approximate match (within 5%)")).toBeInTheDocument();
   });
 });
