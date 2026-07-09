@@ -15,10 +15,10 @@ function makeResult(value: number, absError: number): NetworkResult {
 }
 
 describe("ResultCard", () => {
-  it("formats value at the 1kΩ boundary with k suffix", () => {
+  it("formats value at the 1kΩ boundary as a whole number without suffixes", () => {
     render(<ResultCard result={makeResult(1000, 0)} />);
 
-    expect(screen.getByText("1kΩ", { selector: ".result-card__value" })).toBeInTheDocument();
+    expect(screen.getByText("1000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
   });
 
   it("formats values below 1kΩ without suffix", () => {
@@ -27,16 +27,22 @@ describe("ResultCard", () => {
     expect(screen.getByText("470Ω", { selector: ".result-card__value" })).toBeInTheDocument();
   });
 
-  it("formats values in kΩ range with k suffix", () => {
+  it("formats values in kΩ range without suffixes", () => {
     render(<ResultCard result={makeResult(4700, 0)} />);
 
-    expect(screen.getByText("4.7kΩ", { selector: ".result-card__value" })).toBeInTheDocument();
+    expect(screen.getByText("4700Ω", { selector: ".result-card__value" })).toBeInTheDocument();
   });
 
-  it("formats values in MΩ range with M suffix", () => {
+  it("formats values in MΩ range without suffixes", () => {
     render(<ResultCard result={makeResult(2_200_000, 0)} />);
 
-    expect(screen.getByText("2.2MΩ", { selector: ".result-card__value" })).toBeInTheDocument();
+    expect(screen.getByText("2200000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+  });
+
+  it("rounds displayed values to whole ohms", () => {
+    render(<ResultCard result={makeResult(1000.49, 0.49)} />);
+
+    expect(screen.getByText("1000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
   });
 
   it("shows exact match status for zero error", () => {

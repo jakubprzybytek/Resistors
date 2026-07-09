@@ -15,7 +15,8 @@ test("calculates a resistor network and renders the balanced anchor below Calcul
 
   const firstCard = page.getByRole("listitem").first();
   await expect(firstCard).toContainText(/Ω/);
-  await expect(firstCard).toContainText("660.00Ω");
+  await expect(firstCard).toContainText("660Ω");
+  await expect(firstCard).toContainText("330 + 330");
   const tierHeading = page.getByRole("heading", { level: 2 });
   await expect(tierHeading).toBeVisible();
   await expect(tierHeading).toHaveText(/resistors?/i);
