@@ -3,23 +3,20 @@ import "./ResultCard.scss";
 
 interface Props {
   result: NetworkResult;
-  target: number;
 }
 
-function formatDeviation(deviation: number): string {
-  const absDeviation = Math.abs(deviation);
-  const sign = deviation >= 0 ? "+" : "-";
-
-  if (absDeviation > 0 && absDeviation < 0.01) {
-    return `${sign}<0.01%`;
+function formatResistorValue(value: number): string {
+  const fmt = (v: number) => v.toFixed(2).replace(/\.?0+$/, "");
+  if (value >= 1_000_000) {
+    return `${fmt(value / 1_000_000)}MΩ`;
+  } else if (value >= 1000) {
+    return `${fmt(value / 1000)}kΩ`;
+  } else {
+    return `${fmt(value)}Ω`;
   }
-
-  return `${sign}${absDeviation.toFixed(2)}%`;
 }
 
-function ResultCard({ result, target }: Props) {
-  const deviation = result.deviationPct;
-  const deviationStr = formatDeviation(deviation);
+function ResultCard({ result }: Props) {
   const isExact = result.absError < Number.EPSILON;
 
   return (
@@ -28,9 +25,8 @@ function ResultCard({ result, target }: Props) {
         {isExact ? "Exact match" : "Approximate match (within 5%)"}
       </p>
       <p className="result-card__value">
-        {result.value.toFixed(2)}Ω using {result.count} resistor{result.count === 1 ? "" : "s"}
+        {formatResistorValue(result.value)}
       </p>
-      <p className="result-card__deviation">Deviation: {deviationStr}</p>
       <p className="result-card__description" data-testid="network-description">
         {result.description}
       </p>
