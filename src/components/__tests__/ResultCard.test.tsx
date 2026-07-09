@@ -14,35 +14,39 @@ function makeResult(value: number, absError: number): NetworkResult {
   };
 }
 
+function expectComputedValue(value: string) {
+  expect(document.querySelector(".result-card__value")).toHaveTextContent(value);
+}
+
 describe("ResultCard", () => {
   it("formats value at the 1kΩ boundary as a whole number without suffixes", () => {
     render(<ResultCard result={makeResult(1000, 0)} />);
 
-    expect(screen.getByText("Ro=1000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=1000Ω");
   });
 
   it("formats values below 1kΩ without suffix", () => {
     render(<ResultCard result={makeResult(470, 0)} />);
 
-    expect(screen.getByText("Ro=470Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=470Ω");
   });
 
   it("formats values in kΩ range without suffixes", () => {
     render(<ResultCard result={makeResult(4700, 0)} />);
 
-    expect(screen.getByText("Ro=4700Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=4700Ω");
   });
 
   it("formats values in MΩ range without suffixes", () => {
     render(<ResultCard result={makeResult(2_200_000, 0)} />);
 
-    expect(screen.getByText("Ro=2200000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=2200000Ω");
   });
 
   it("rounds displayed values to whole ohms", () => {
     render(<ResultCard result={makeResult(1000.49, 0.49)} />);
 
-    expect(screen.getByText("Ro=1000Ω", { selector: ".result-card__value" })).toBeInTheDocument();
+    expectComputedValue("Ro=1000Ω");
   });
 
   it("shows exact match status for zero error", () => {
