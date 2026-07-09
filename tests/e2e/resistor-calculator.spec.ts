@@ -1,6 +1,11 @@
 import { test, expect } from "@playwright/test";
 
-test("calculates a resistor network for a target value", async ({ page }) => {
+test("calculates a resistor network and renders the balanced anchor below Calculate", async ({ page }) => {
+  const messages: string[] = [];
+  page.on("console", (message) => {
+    messages.push(message.text());
+  });
+
   await page.goto("/");
 
   await page.getByRole("tab", { name: "Custom", exact: true }).click();
@@ -8,18 +13,23 @@ test("calculates a resistor network for a target value", async ({ page }) => {
   await page.getByPlaceholder("660").fill("660");
   await page.getByRole("button", { name: /calculate/i }).click();
 
-  const listItems = page.getByRole("listitem");
-  await expect(listItems).toHaveCount(3);
-  await expect(listItems.first()).toContainText(/Ω/);
-  await expect(listItems.first()).toContainText("660.00Ω");
-  await expect(page.getByText("330Ω + 330Ω")).toBeVisible();
+  const firstCard = page.getByRole("listitem").first();
+  await expect(firstCard).toContainText(/Ω/);
+  await expect(firstCard).toContainText("660.00Ω");
+  await expect(page.getByRole("heading", { level: 2 })).toBeVisible();
 
   const calculateButton = page.getByRole("button", { name: /^> calculate$/i });
-  const firstCard = listItems.first();
   const buttonBox = await calculateButton.boundingBox();
   const cardBox = await firstCard.boundingBox();
 
   expect(buttonBox).not.toBeNull();
   expect(cardBox).not.toBeNull();
   expect(cardBox!.y).toBeGreaterThan(buttonBox!.y);
+
+  expect(messages).toEqual(
+    expect.arrayContaining([
+      expect.stringMatching(/^Found results: \d+$/),
+      expect.stringMatching(/^Computation time: \d+\.\d{2}ms$/),
+    ])
+  );
 });

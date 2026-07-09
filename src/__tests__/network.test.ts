@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { findAllResistorNetworks, findResistorNetworkUnlimited } from "../network.js";
+import {
+  canonicalKey,
+  findAllResistorNetworks,
+  findResistorNetworkUnlimited,
+  type Node,
+} from "../network.js";
 
 describe("findResistorNetworkUnlimited", () => {
   it("returns null for an empty resistor set", () => {
@@ -108,5 +113,57 @@ describe("findAllResistorNetworks", () => {
     const descriptions = results.map((result) => result.description);
 
     expect(new Set(descriptions).size).toBe(descriptions.length);
+  });
+});
+
+describe("canonicalKey", () => {
+  const leaf = (value: number): Node => ({
+    kind: "leaf",
+    value,
+    description: `${value}Ω`,
+    signature: `leaf:${value}`,
+  });
+
+  const series = (left: Node, right: Node): Node => ({
+    kind: "series",
+    left,
+    right,
+    value: left.value + right.value,
+    description: `${left.description} + ${right.description}`,
+    signature: `series:${left.signature}|${right.signature}`,
+  });
+
+  const parallel = (left: Node, right: Node): Node => ({
+    kind: "parallel",
+    left,
+    right,
+    value: (left.value * right.value) / (left.value + right.value),
+    description: `${left.description} ∥ ${right.description}`,
+    signature: `parallel:${left.signature}|${right.signature}`,
+  });
+
+  it("matches equivalent commutative forms", () => {
+    const left = series(leaf(100), parallel(leaf(220), leaf(330)));
+    const right = series(parallel(leaf(330), leaf(220)), leaf(100));
+
+    expect(canonicalKey(left)).toBe(canonicalKey(right));
+  });
+
+  it("flattens associative chains", () => {
+    const nestedLeft = series(series(leaf(100), leaf(220)), leaf(330));
+    const nestedRight = series(leaf(100), series(leaf(220), leaf(330)));
+
+    expect(canonicalKey(nestedLeft)).toBe(canonicalKey(nestedRight));
+  });
+
+  it("keeps distinct topologies as distinct keys", () => {
+    const allSeries = series(series(leaf(100), leaf(100)), leaf(100));
+    const mixed = series(leaf(100), parallel(leaf(200), leaf(200)));
+
+    expect(canonicalKey(allSeries)).not.toBe(canonicalKey(mixed));
+  });
+
+  it("rounds leaf values to avoid floating-point noise duplicates", () => {
+    expect(canonicalKey(leaf(100.0000000001))).toBe(canonicalKey(leaf(100.0000000002)));
   });
 });

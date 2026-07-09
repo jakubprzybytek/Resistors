@@ -45,3 +45,13 @@
     word-break: break-word;
   }
 }
+
+@media (max-width: 640px) {
+  .result-card {
+    padding: 1rem;
+
+    &__value {
+      font-size: 1.35rem;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+.ranking-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+
+  &__tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__nav {
+    padding: 0.7rem;
+    font: inherit;
+    font-weight: 700;
+    background: transparent;
+    color: var(--bp-accent-2);
+    border: 1px solid var(--bp-accent);
+    border-radius: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    &:hover {
+      background: rgba(125, 211, 252, 0.15);
+    }
+  }
+
+  &__empty {
+    margin-top: 1.25rem;
+  }
+}
