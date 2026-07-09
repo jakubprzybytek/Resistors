@@ -29,6 +29,10 @@ function readStoredValue(key: string) {
 }
 
 function writeStoredValue(key: string, value: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
   try {
     window.localStorage.setItem(key, value);
   } catch {
@@ -40,13 +44,19 @@ function isSeriesTab(value: string | null): value is SeriesTab {
   return value !== null && TABS.includes(value as SeriesTab);
 }
 
+function getInitialActiveTab() {
+  const storedTab = readStoredValue(STORAGE_KEYS.activeTab);
+  return isSeriesTab(storedTab) ? storedTab : TABS[0];
+}
+
+function getInitialStoredText(key: string) {
+  return readStoredValue(key) ?? "";
+}
+
 function ResistorForm({ onCalculate }: Props) {
-  const [activeTab, setActiveTab] = useState<SeriesTab>(() => {
-    const storedTab = readStoredValue(STORAGE_KEYS.activeTab);
-    return isSeriesTab(storedTab) ? storedTab : TABS[0];
-  });
-  const [customText, setCustomText] = useState(() => readStoredValue(STORAGE_KEYS.customText) ?? "");
-  const [targetText, setTargetText] = useState(() => readStoredValue(STORAGE_KEYS.targetText) ?? "");
+  const [activeTab, setActiveTab] = useState<SeriesTab>(getInitialActiveTab);
+  const [customText, setCustomText] = useState(() => getInitialStoredText(STORAGE_KEYS.customText));
+  const [targetText, setTargetText] = useState(() => getInitialStoredText(STORAGE_KEYS.targetText));
   const [error, setError] = useState<string | null>(null);
 
   const isCustomTab = activeTab === "Custom";
