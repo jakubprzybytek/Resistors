@@ -1,7 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ResistorForm from "../ResistorForm.js";
+
+beforeEach(() => {
+  window.localStorage.clear();
+});
 
 describe("ResistorForm tabs", () => {
   it("defaults to the E3 tab with read-only generated content", () => {
@@ -48,6 +52,25 @@ describe("ResistorForm tabs", () => {
 
     const textarea = screen.getByPlaceholderText(/100, 220, 330/) as HTMLTextAreaElement;
     expect(textarea.value).toContain("1, 1.1, 1.2");
+  });
+
+  it("restores the stored tab, target, and custom values on remount", async () => {
+    window.localStorage.setItem("resistor-form.activeTab", "Custom");
+    window.localStorage.setItem("resistor-form.customText", "100, 220, 330");
+    window.localStorage.setItem("resistor-form.targetText", "660");
+
+    const { unmount } = render(<ResistorForm onCalculate={vi.fn()} />);
+
+    expect(screen.getByRole("tab", { name: "Custom" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByPlaceholderText(/100, 220, 330/)).toHaveValue("100, 220, 330");
+    expect(screen.getByPlaceholderText("660")).toHaveValue(660);
+
+    unmount();
+    render(<ResistorForm onCalculate={vi.fn()} />);
+
+    expect(screen.getByRole("tab", { name: "Custom" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByPlaceholderText(/100, 220, 330/)).toHaveValue("100, 220, 330");
+    expect(screen.getByPlaceholderText("660")).toHaveValue(660);
   });
 });
 
@@ -113,5 +136,11 @@ describe("ResistorForm validation", () => {
     const [values, target] = onCalculate.mock.calls[0];
     expect(values).toContain(4.7);
     expect(target).toBe(660);
+  });
+
+  it("uses a numeric input for the target field", () => {
+    render(<ResistorForm onCalculate={vi.fn()} />);
+
+    expect(screen.getByPlaceholderText("660")).toHaveAttribute("type", "number");
   });
 });
