@@ -1,4 +1,6 @@
 .result-card {
+  display: flex;
+  flex-direction: column;
   padding: 1.5rem;
   border: 1px dashed var(--bp-border);
   border-radius: 4px;

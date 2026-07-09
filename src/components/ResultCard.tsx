@@ -35,7 +35,7 @@ function ResultCard({ result }: Props) {
       <p className={`result-card__status result-card__status--${statusTone}`}>
         {statusLabel}
       </p>
-      <p className="result-card__value">
+      <p className="result-card__value" aria-label={`R sub o equals ${formatResistorValue(result.value)}`}>
         <span className="result-card__value-label">
           R<sub>o</sub>=
         </span>
