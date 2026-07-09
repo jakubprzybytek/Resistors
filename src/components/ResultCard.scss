@@ -10,7 +10,8 @@
   }
 
   &__status {
-    display: inline-block;
+    display: inline-flex;
+    align-self: flex-start;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -20,6 +21,18 @@
     padding: 0.2rem 0.6rem;
     border-radius: 3px;
     margin: 0 0 0.9rem;
+
+    &--exact {
+      background: #4ade80;
+    }
+
+    &--near {
+      background: var(--bp-accent);
+    }
+
+    &--wide {
+      background: #fb923c;
+    }
   }
 
   &__value {
@@ -27,6 +40,16 @@
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--bp-text);
+  }
+
+  &__value-label {
+    margin-right: 0.15rem;
+  }
+
+  &__deviation {
+    margin: 0 0 0.9rem;
+    font-size: 0.85rem;
+    color: var(--bp-text-dim);
   }
 
   &__description {
