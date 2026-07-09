@@ -63,14 +63,14 @@ describe("ResistorForm tabs", () => {
 
     expect(screen.getByRole("tab", { name: "Custom" })).toHaveAttribute("aria-selected", "true");
     expect(screen.getByPlaceholderText(/100, 220, 330/)).toHaveValue("100, 220, 330");
-    expect(screen.getByPlaceholderText("660")).toHaveValue(660);
+    expect(screen.getByPlaceholderText("660")).toHaveDisplayValue("660");
 
     unmount();
     render(<ResistorForm onCalculate={vi.fn()} />);
 
     expect(screen.getByRole("tab", { name: "Custom" })).toHaveAttribute("aria-selected", "true");
     expect(screen.getByPlaceholderText(/100, 220, 330/)).toHaveValue("100, 220, 330");
-    expect(screen.getByPlaceholderText("660")).toHaveValue(660);
+    expect(screen.getByPlaceholderText("660")).toHaveDisplayValue("660");
   });
 });
 
