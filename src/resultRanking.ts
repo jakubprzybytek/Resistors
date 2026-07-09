@@ -1,4 +1,4 @@
-import { canonicalKey, COMPARISON_EPSILON, roundComparableValue, type NetworkResult } from "./network.js";
+import { canonicalKey, COMPARISON_EPSILON, type NetworkResult } from "./network.js";
 
 export interface TierCard {
   count: number;
@@ -93,7 +93,7 @@ function boundTierResults(tiers: TierBuild[], toleranceEdge: number): TierCard[]
 
     return {
       count: tier.count,
-      bestError: roundComparableValue(tier.bestError),
+      bestError: tier.bestError,
       results: bounded,
     };
   });
@@ -138,10 +138,11 @@ export function selectKnee(tiers: TierCard[]): number {
 
   for (let index = 0; index < points.length; index++) {
     const point = points[index];
-    const interpolationFactor =
-      Math.abs(lineDx) > COMPARISON_EPSILON ? (point.x - start.x) / lineDx : (point.y - start.y) / lineDy;
+    // x is normalized from max-count (1) to min-count (0), so endpoint dx is guaranteed non-zero here.
+    const interpolationFactor = (point.x - start.x) / lineDx;
     const lineY = start.y + interpolationFactor * lineDy;
 
+    // Skip points above the endpoint line because they are worse-than-linear trade-offs and cannot be knees.
     if (point.y > lineY + COMPARISON_EPSILON) {
       continue;
     }

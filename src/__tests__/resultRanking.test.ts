@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { buildRankingModel, selectKnee, type TierCard } from "../resultRanking.js";
 import type { NetworkResult, Node } from "../network.js";
 
+const COUNT_NOISE_FACTOR = 1000;
+const LABEL_NOISE_FACTOR = 10000;
+
 function leaf(value: number, label: string): Node {
   return { kind: "leaf", value, description: label, signature: label };
 }
@@ -12,7 +15,7 @@ function series(left: Node, right: Node, value: number, label: string): Node {
 
 function makeResult(count: number, absError: number, description: string, node: Node): NetworkResult {
   const target = 100;
-  const value = target + absError + count / 1000 + description.length / 10000;
+  const value = target + absError + count / COUNT_NOISE_FACTOR + description.length / LABEL_NOISE_FACTOR;
   return {
     node,
     count,

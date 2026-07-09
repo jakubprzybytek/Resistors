@@ -25,11 +25,11 @@ function RankingView({ model, target }: Props) {
   const hasSimpler = bottomIndex < model.tiers.length - 1;
   const visibleTiers = model.tiers.slice(topIndex, bottomIndex + 1);
 
-  const movePosition = (index: number, direction: -1 | 1) => {
+  const movePosition = (index: number, delta: -1 | 1) => {
     setPositions((current) => {
       const next = [...current];
       const tier = model.tiers[index];
-      const nextPosition = Math.max(0, Math.min(current[index] + direction, tier.results.length - 1));
+      const nextPosition = Math.max(0, Math.min(current[index] + delta, tier.results.length - 1));
       next[index] = nextPosition;
       return next;
     });

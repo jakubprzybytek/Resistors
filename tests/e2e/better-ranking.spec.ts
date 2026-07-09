@@ -30,8 +30,7 @@ test("browses tier carousel and disables arrows at bounds", async ({ page }) => 
 
   const prevButton = page.getByRole("button", { name: /previous configuration/i }).first();
   const nextButton = page.getByRole("button", { name: /next configuration/i }).first();
-  const position = page.getByText("1 / 4");
-  const descriptions = page.locator(".result-card__description");
+  const descriptions = page.getByTestId("network-description");
 
   await expect(prevButton).toBeDisabled();
   await expect(nextButton).toBeEnabled();
@@ -49,7 +48,7 @@ test("browses tier carousel and disables arrows at bounds", async ({ page }) => 
 
   await page.getByRole("button", { name: /previous configuration/i }).first().click();
   await expect(page.getByText("3 / 4")).toBeVisible();
-  await expect(position).toHaveCount(0);
+  await expect(page.getByText("1 / 4")).toHaveCount(0);
 });
 
 test("shows empty state with no navigation when no results are found", async ({ page }) => {

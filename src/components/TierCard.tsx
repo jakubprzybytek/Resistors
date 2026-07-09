@@ -11,6 +11,10 @@ interface Props {
 }
 
 function formatDeviation(value: number): string {
+  if (Object.is(value, 0)) {
+    return "0.00%";
+  }
+
   const sign = value >= 0 ? "+" : "-";
   const abs = Math.abs(value);
 
@@ -47,7 +51,7 @@ function TierCard({ tier, position, onPrev, onNext, target }: Props) {
         >
           ←
         </button>
-        <span className="tier-card__position" aria-live="polite">
+        <span className="tier-card__position">
           {position + 1} / {tier.results.length}
         </span>
         <button

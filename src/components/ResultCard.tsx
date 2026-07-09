@@ -31,7 +31,9 @@ function ResultCard({ result, target }: Props) {
         {result.value.toFixed(2)}Ω using {result.count} resistor{result.count === 1 ? "" : "s"}
       </p>
       <p className="result-card__deviation">Deviation: {deviationStr}</p>
-      <p className="result-card__description">{result.description}</p>
+      <p className="result-card__description" data-testid="network-description">
+        {result.description}
+      </p>
     </article>
   );
 }
