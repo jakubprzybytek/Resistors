@@ -86,3 +86,21 @@ test("Custom tab retains typed values when switching tabs away and back", async 
 
   await expect(page.locator("textarea")).toHaveValue("100, 220, 330");
 });
+
+test("reload restores persisted form state without restoring computed results", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("tab", { name: "Custom", exact: true }).click();
+  await page.locator("textarea").fill("100, 220, 330");
+  await page.getByPlaceholder("660").fill("660");
+  await page.getByRole("button", { name: /calculate/i }).click();
+
+  await expect(page.getByRole("listitem").first()).toContainText("660Ω");
+
+  await page.reload();
+
+  await expect(page.getByRole("tab", { name: "Custom", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("textarea")).toHaveValue("100, 220, 330");
+  await expect(page.getByPlaceholder("660")).toHaveValue("660");
+  await expect(page.getByRole("listitem")).toHaveCount(0);
+});

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import "./ResistorForm.scss";
 import { parseResistorValues } from "../resistorValueTokens.js";
 import { formatSeriesAsRows, type SeriesName } from "../resistorSeries.js";
@@ -10,15 +10,69 @@ interface Props {
 type SeriesTab = SeriesName | "Custom";
 
 const TABS: SeriesTab[] = ["E3", "E6", "E12", "E24", "Custom"];
+const STORAGE_KEYS = {
+  activeTab: "resistor-form.activeTab",
+  customText: "resistor-form.customText",
+  targetText: "resistor-form.targetText",
+};
+
+function readStoredValue(key: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredValue(key: string, value: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Ignore persistence failures and keep the form usable.
+  }
+}
+
+function isSeriesTab(value: string | null): value is SeriesTab {
+  return value !== null && TABS.includes(value as SeriesTab);
+}
+
+function getInitialActiveTab() {
+  const storedTab = readStoredValue(STORAGE_KEYS.activeTab);
+  return isSeriesTab(storedTab) ? storedTab : TABS[0];
+}
+
+function getInitialStoredText(key: string) {
+  return readStoredValue(key) ?? "";
+}
 
 function ResistorForm({ onCalculate }: Props) {
-  const [activeTab, setActiveTab] = useState<SeriesTab>(TABS[0]);
-  const [customText, setCustomText] = useState("");
-  const [targetText, setTargetText] = useState("");
+  const [activeTab, setActiveTab] = useState<SeriesTab>(getInitialActiveTab);
+  const [customText, setCustomText] = useState(() => getInitialStoredText(STORAGE_KEYS.customText));
+  const [targetText, setTargetText] = useState(() => getInitialStoredText(STORAGE_KEYS.targetText));
   const [error, setError] = useState<string | null>(null);
 
   const isCustomTab = activeTab === "Custom";
   const valuesText = isCustomTab ? customText : formatSeriesAsRows(activeTab);
+
+  useEffect(() => {
+    writeStoredValue(STORAGE_KEYS.activeTab, activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    writeStoredValue(STORAGE_KEYS.customText, customText);
+  }, [customText]);
+
+  useEffect(() => {
+    writeStoredValue(STORAGE_KEYS.targetText, targetText);
+  }, [targetText]);
 
   const handleTabClick = (tab: SeriesTab) => {
     setActiveTab(tab);
@@ -83,7 +137,9 @@ function ResistorForm({ onCalculate }: Props) {
         <span>Target resistance (Ω)</span>
         <input
           className="resistor-form__input"
-          type="text"
+          type="number"
+          min="0"
+          step="any"
           value={targetText}
           onChange={(e) => setTargetText(e.target.value)}
           placeholder="660"
