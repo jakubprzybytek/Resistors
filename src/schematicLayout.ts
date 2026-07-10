@@ -25,8 +25,6 @@ export interface TerminalShape {
   x: number;
   y: number;
   label: string;
-  /** Which side the label text should be anchored relative to the dot. */
-  side: "start" | "end";
 }
 
 export type SchematicShape = ResistorShape | WireShape | TerminalShape;
@@ -45,8 +43,12 @@ export const LABEL_HEIGHT = 16;
 const SERIES_GAP = 18;
 const PARALLEL_GAP = 22;
 const JUNCTION_LEAD = 16;
+/** Minimum stub length between a parallel rail and its branch element, even for the widest branch. */
+export const BRANCH_TAIL = 14;
 const TERMINAL_LEAD = 24;
 export const TERMINAL_RADIUS = 4;
+/** Vertical space reserved above a terminal dot for its label. */
+export const TERMINAL_LABEL_HEIGHT = 14;
 const PADDING = 12;
 
 interface Measured {
@@ -54,6 +56,20 @@ interface Measured {
   height: number;
   /** Vertical offset of the horizontal through-wire from the top of the box. */
   centerY: number;
+}
+
+/**
+ * Flattens a chain of same-kind series/parallel nodes into an ordered list of
+ * children, so e.g. `A || (B || C)` is treated as a single 3-way parallel
+ * group rather than two nested groups. This keeps the schematic consistent
+ * with the flattened textual description (see network.ts).
+ */
+function flattenGroup(node: Node, kind: "series" | "parallel"): Node[] {
+  if (node.kind !== kind) {
+    return [node];
+  }
+
+  return [...flattenGroup(node.left, kind), ...flattenGroup(node.right, kind)];
 }
 
 function measure(node: Node): Measured {
@@ -66,25 +82,24 @@ function measure(node: Node): Measured {
     };
   }
 
-  const left = measure(node.left);
-  const right = measure(node.right);
-
   if (node.kind === "series") {
-    const centerY = Math.max(left.centerY, right.centerY);
-    const bottom = Math.max(
-      centerY - left.centerY + left.height,
-      centerY - right.centerY + right.height
+    const children = flattenGroup(node, "series").map(measure);
+    const centerY = Math.max(...children.map((child) => child.centerY));
+    const height = Math.max(
+      ...children.map((child) => centerY - child.centerY + child.height)
     );
-    return {
-      width: left.width + SERIES_GAP + right.width,
-      height: bottom,
-      centerY,
-    };
+    const width =
+      children.reduce((sum, child) => sum + child.width, 0) +
+      SERIES_GAP * (children.length - 1);
+    return { width, height, centerY };
   }
 
   // parallel: stack branches vertically between two shared rails.
-  const branchWidth = Math.max(left.width, right.width);
-  const height = left.height + PARALLEL_GAP + right.height;
+  const children = flattenGroup(node, "parallel").map(measure);
+  const branchWidth = Math.max(...children.map((child) => child.width)) + 2 * BRANCH_TAIL;
+  const height =
+    children.reduce((sum, child) => sum + child.height, 0) +
+    PARALLEL_GAP * (children.length - 1);
   return {
     width: branchWidth + 2 * JUNCTION_LEAD,
     height,
@@ -112,55 +127,56 @@ function place(node: Node, x: number, y: number, shapes: SchematicShape[]): Meas
   }
 
   if (node.kind === "series") {
-    const left = measure(node.left);
-    const right = measure(node.right);
+    const children = flattenGroup(node, "series");
+    const measured = children.map(measure);
     const lineY = y + box.centerY;
 
-    place(node.left, x, lineY - left.centerY, shapes);
-    const rightX = x + left.width + SERIES_GAP;
-    place(node.right, rightX, lineY - right.centerY, shapes);
+    let cursorX = x;
+    let previousChildRightX: number | null = null;
+    for (let i = 0; i < children.length; i++) {
+      const childBox = measured[i];
+      place(children[i], cursorX, lineY - childBox.centerY, shapes);
 
-    // Connecting wire between the two children.
-    shapes.push({
-      kind: "wire",
-      x1: x + left.width,
-      y1: lineY,
-      x2: rightX,
-      y2: lineY,
-    });
+      if (previousChildRightX !== null) {
+        // Connecting wire between adjacent children.
+        shapes.push({ kind: "wire", x1: previousChildRightX, y1: lineY, x2: cursorX, y2: lineY });
+      }
+
+      previousChildRightX = cursorX + childBox.width;
+      cursorX = previousChildRightX + SERIES_GAP;
+    }
     return box;
   }
 
   // parallel
-  const left = measure(node.left);
-  const right = measure(node.right);
+  const children = flattenGroup(node, "parallel");
+  const measured = children.map(measure);
   const branchWidth = box.width - 2 * JUNCTION_LEAD;
   const leftRailX = x + JUNCTION_LEAD;
   const rightRailX = x + box.width - JUNCTION_LEAD;
   const centerLineY = y + box.centerY;
 
-  const branches: { child: Node; measured: Measured; topY: number }[] = [
-    { child: node.left, measured: left, topY: y },
-    { child: node.right, measured: right, topY: y + left.height + PARALLEL_GAP },
-  ];
-
   const lineYs: number[] = [];
-  for (const branch of branches) {
-    const childX = leftRailX + (branchWidth - branch.measured.width) / 2;
-    const lineY = branch.topY + branch.measured.centerY;
+  let topY = y;
+  for (let i = 0; i < children.length; i++) {
+    const childBox = measured[i];
+    const childX = leftRailX + (branchWidth - childBox.width) / 2;
+    const lineY = topY + childBox.centerY;
     lineYs.push(lineY);
 
-    place(branch.child, childX, branch.topY, shapes);
+    place(children[i], childX, topY, shapes);
 
-    // Horizontal stubs from the rails to the branch element.
+    // Horizontal tails from the rails to the branch element (always at least BRANCH_TAIL long).
     shapes.push({ kind: "wire", x1: leftRailX, y1: lineY, x2: childX, y2: lineY });
     shapes.push({
       kind: "wire",
-      x1: childX + branch.measured.width,
+      x1: childX + childBox.width,
       y1: lineY,
       x2: rightRailX,
       y2: lineY,
     });
+
+    topY += childBox.height + PARALLEL_GAP;
   }
 
   const topLineY = Math.min(...lineYs);
@@ -196,7 +212,7 @@ export function buildSchematic(node: Node, options: BuildSchematicOptions = {}):
   const shapes: SchematicShape[] = [];
 
   const originX = PADDING + TERMINAL_LEAD;
-  const originY = PADDING;
+  const originY = PADDING + TERMINAL_LABEL_HEIGHT;
   const lineY = originY + network.centerY;
 
   place(node, originX, originY, shapes);
@@ -204,17 +220,17 @@ export function buildSchematic(node: Node, options: BuildSchematicOptions = {}):
   // Left terminal + lead.
   const leftTerminalX = PADDING;
   shapes.push({ kind: "wire", x1: leftTerminalX, y1: lineY, x2: originX, y2: lineY });
-  shapes.push({ kind: "terminal", x: leftTerminalX, y: lineY, label: leftLabel, side: "end" });
+  shapes.push({ kind: "terminal", x: leftTerminalX, y: lineY, label: leftLabel });
 
   // Right terminal + lead.
   const networkRightX = originX + network.width;
   const rightTerminalX = networkRightX + TERMINAL_LEAD;
   shapes.push({ kind: "wire", x1: networkRightX, y1: lineY, x2: rightTerminalX, y2: lineY });
-  shapes.push({ kind: "terminal", x: rightTerminalX, y: lineY, label: rightLabel, side: "start" });
+  shapes.push({ kind: "terminal", x: rightTerminalX, y: lineY, label: rightLabel });
 
   return {
     width: rightTerminalX + PADDING,
-    height: network.height + 2 * PADDING,
+    height: network.height + 2 * PADDING + TERMINAL_LABEL_HEIGHT,
     shapes,
   };
 }

@@ -2,6 +2,7 @@ import type { Node } from "../network.js";
 import {
   buildSchematic,
   RESISTOR_HEIGHT,
+  TERMINAL_LABEL_HEIGHT,
   TERMINAL_RADIUS,
   type SchematicShape,
 } from "../schematicLayout.js";
@@ -45,9 +46,9 @@ function renderShape(shape: SchematicShape, index: number) {
           <circle cx={shape.x} cy={shape.y} r={TERMINAL_RADIUS} />
           <text
             className="network-schematic__terminal-label"
-            x={shape.x + (shape.side === "end" ? -(TERMINAL_RADIUS + 3) : TERMINAL_RADIUS + 3)}
-            y={shape.y}
-            textAnchor={shape.side}
+            x={shape.x}
+            y={shape.y - TERMINAL_RADIUS - TERMINAL_LABEL_HEIGHT / 2}
+            textAnchor="middle"
             dominantBaseline="middle"
           >
             {shape.label}

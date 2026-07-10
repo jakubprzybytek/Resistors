@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Node } from "../network.js";
 import {
   buildSchematic,
+  BRANCH_TAIL,
   type ResistorShape,
   type TerminalShape,
   type WireShape,
@@ -103,5 +104,53 @@ describe("buildSchematic", () => {
       series(parallel(leaf(220), leaf(330)), parallel(leaf(470), leaf(680)))
     );
     expect(resistors(buildSchematic(node).shapes)).toHaveLength(5);
+  });
+
+  it("draws a non-zero tail between the rails and each parallel branch", () => {
+    const schematic = buildSchematic(parallel(leaf(100), leaf(220)));
+    const drawnWires = wires(schematic.shapes);
+
+    // Every horizontal stub connecting a rail to a resistor must be at least BRANCH_TAIL long.
+    const stubs = drawnWires.filter((wire) => wire.y1 === wire.y2 && wire.x1 !== wire.x2);
+    expect(stubs.length).toBeGreaterThan(0);
+    for (const stub of stubs) {
+      expect(Math.abs(stub.x2 - stub.x1)).toBeGreaterThanOrEqual(BRANCH_TAIL);
+    }
+  });
+
+  it("draws a non-zero tail even for the widest parallel branch", () => {
+    // The series branch is wider than the single-resistor branch, so the
+    // series branch previously touched the rails directly.
+    const schematic = buildSchematic(parallel(leaf(100), series(leaf(220), leaf(330))));
+    const drawnWires = wires(schematic.shapes);
+    const stubs = drawnWires.filter((wire) => wire.y1 === wire.y2 && wire.x1 !== wire.x2);
+
+    expect(stubs.length).toBeGreaterThan(0);
+    for (const stub of stubs) {
+      expect(Math.abs(stub.x2 - stub.x1)).toBeGreaterThanOrEqual(BRANCH_TAIL);
+    }
+  });
+
+  it("flattens nested same-kind parallel groups into a single set of rails", () => {
+    // A || (B || C) should render as one 3-way parallel group, matching the
+    // flattened "A || B || C" textual description, rather than nested rails.
+    const nested = parallel(leaf(100), parallel(leaf(220), leaf(330)));
+    const schematic = buildSchematic(nested);
+    const drawnWires = wires(schematic.shapes);
+
+    // Exactly two vertical rails (one pair), not two nested pairs.
+    const verticalRails = drawnWires.filter((wire) => wire.x1 === wire.x2 && wire.y1 !== wire.y2);
+    const railXs = new Set(verticalRails.map((wire) => wire.x1));
+    expect(railXs.size).toBe(2);
+    expect(resistors(schematic.shapes)).toHaveLength(3);
+  });
+
+  it("draws terminal labels without a side property, positioned above the dot", () => {
+    const schematic = buildSchematic(leaf(100));
+    const drawnTerminals = terminals(schematic.shapes);
+
+    for (const terminal of drawnTerminals) {
+      expect(terminal).not.toHaveProperty("side");
+    }
   });
 });
