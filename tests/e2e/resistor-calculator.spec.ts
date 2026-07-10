@@ -17,6 +17,13 @@ test("calculates a resistor network and renders the balanced anchor below Calcul
   await expect(firstCard).toContainText(/Ω/);
   await expect(firstCard).toContainText("660Ω");
   await expect(firstCard).toContainText("330 + 330");
+
+  const schematic = firstCard.getByTestId("network-schematic");
+  await expect(schematic).toBeVisible();
+  await expect(schematic.getByRole("img", { name: /schematic/i })).toBeVisible();
+  await expect(schematic.getByText("A", { exact: true })).toBeAttached();
+  await expect(schematic.getByText("B", { exact: true })).toBeAttached();
+
   const tierHeading = page.getByRole("heading", { level: 2 });
   await expect(tierHeading).toBeVisible();
   await expect(tierHeading).toHaveText(/resistors?/i);

@@ -1,0 +1,63 @@
+.network-schematic {
+  margin: 0.9rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--bp-border);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+
+  &__caption {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--bp-text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  &__svg {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  &__wire {
+    stroke: var(--bp-accent);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  &__resistor {
+    rect {
+      fill: none;
+      stroke: var(--bp-accent);
+      stroke-width: 1.5;
+    }
+  }
+
+  &__resistor-label {
+    fill: var(--bp-text);
+    font-size: 12px;
+    font-family: inherit;
+  }
+
+  &__terminal {
+    circle {
+      fill: var(--bp-accent);
+      stroke: var(--bp-accent);
+    }
+  }
+
+  &__terminal-label {
+    fill: var(--bp-text);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+  }
+}
+
+@media (max-width: 640px) {
+  .network-schematic {
+    padding: 0.5rem 0.6rem;
+  }
+}

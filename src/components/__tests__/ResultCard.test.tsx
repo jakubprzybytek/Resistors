@@ -72,4 +72,13 @@ describe("ResultCard", () => {
 
     expect(screen.getByText("Deviation: +<0.01%")).toBeInTheDocument();
   });
+
+  it("renders a schematic with two terminals below the description", () => {
+    render(<ResultCard result={makeResult(1000, 0)} />);
+
+    expect(screen.getByTestId("network-schematic")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /schematic/i })).toBeInTheDocument();
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(screen.getByText("B")).toBeInTheDocument();
+  });
 });

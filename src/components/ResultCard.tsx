@@ -1,4 +1,5 @@
 import type { NetworkResult } from "../network.js";
+import NetworkSchematic from "./NetworkSchematic.tsx";
 import "./ResultCard.scss";
 
 interface Props {
@@ -48,6 +49,7 @@ function ResultCard({ result }: Props) {
       <p className="result-card__description" data-testid="network-description">
         {result.description}
       </p>
+      <NetworkSchematic node={result.node} description={result.description} />
     </article>
   );
 }
