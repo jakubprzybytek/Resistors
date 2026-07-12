@@ -39,17 +39,15 @@ function App() {
 
   return (
     <main className="app">
-      <div className="app__header">
-        <h1 className="app__title">Resistor Network Calculator</h1>
-        <button
-          className="app__how-it-works-link"
-          type="button"
-          onClick={() => setPage("how-it-works")}
-          aria-label="How it works"
-        >
-          ? How it works
-        </button>
-      </div>
+      <h1 className="app__title">Resistor Network Calculator</h1>
+      <button
+        className="app__how-it-works-link"
+        type="button"
+        onClick={() => setPage("how-it-works")}
+        aria-label="How it works"
+      >
+        ? How it works
+      </button>
       <p className="app__subtitle">// find a resistor combination that hits your target</p>
       <ResistorForm onCalculate={handleCalculate} />
       {hasCalculated && <RankingView key={calcId} model={model} />}

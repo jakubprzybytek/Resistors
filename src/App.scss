@@ -43,14 +43,6 @@ body {
     max-width: 700px;
   }
 
-  &__header {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    margin: 0 0 0.4rem;
-  }
-
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
@@ -61,20 +53,18 @@ body {
   }
 
   &__how-it-works-link {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    display: block;
+    width: 100%;
     font: inherit;
     font-size: 0.7rem;
     color: var(--bp-text-dim);
     background: transparent;
     border: none;
-    padding: 0;
+    padding: 0.2rem 0 0;
     cursor: pointer;
+    text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    white-space: nowrap;
 
     &:hover {
       color: var(--bp-accent);
