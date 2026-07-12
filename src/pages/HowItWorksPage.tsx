@@ -109,7 +109,7 @@ function HowItWorksPage({ onBack }: Props) {
           To avoid redundant work the algorithm tracks all <strong>distinct resistance values
           already reached</strong>. If a new combination produces a value that was already found
           with fewer parts, it is discarded. Deduplication uses logarithmic bucketing so that tiny
-          floating-point differences don&apos;t create spurious duplicates.
+          floating-point differences don't create spurious duplicates.
         </p>
         <p>
           The search stops at the first layer <em>k</em> where any result falls within tolerance —
