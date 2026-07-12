@@ -1,0 +1,182 @@
+.how-it-works {
+  width: 100%;
+  max-width: 660px;
+  padding: 3rem 1rem 4rem;
+
+  &__header {
+    margin-bottom: 2.5rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0.8rem 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__lead {
+    color: var(--bp-text-dim);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  &__back {
+    font: inherit;
+    font-size: 0.78rem;
+    color: var(--bp-accent);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    &:hover {
+      color: var(--bp-accent-2);
+    }
+  }
+
+  &__section {
+    margin-bottom: 2.5rem;
+
+    h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--bp-accent);
+      margin: 0 0 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--bp-border);
+    }
+
+    h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--bp-text-dim);
+      margin: 1.2rem 0 0.4rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--bp-text);
+      margin: 0 0 0.7rem;
+    }
+
+    ol {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--bp-text);
+      margin: 0 0 0.7rem;
+      padding-left: 1.4rem;
+
+      li {
+        margin-bottom: 0.3rem;
+      }
+    }
+
+    strong {
+      color: var(--bp-accent-2);
+    }
+
+    em {
+      color: var(--bp-text-dim);
+      font-style: normal;
+    }
+
+    code {
+      font: inherit;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--bp-border);
+      border-radius: 3px;
+      padding: 0.1em 0.35em;
+      font-size: 0.9em;
+      color: var(--bp-accent);
+    }
+  }
+
+  &__formulas {
+    display: flex;
+    gap: 1rem;
+    margin: 0.8rem 0;
+
+    @media (max-width: 500px) {
+      flex-direction: column;
+    }
+  }
+
+  &__formula-card {
+    flex: 1;
+    background: var(--bp-surface);
+    border: 1px dashed var(--bp-border);
+    border-radius: 4px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--bp-text-dim);
+    }
+  }
+
+  &__formula-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--bp-accent);
+  }
+
+  &__formula {
+    font: inherit;
+    font-size: 0.88rem;
+    color: var(--bp-accent-2);
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin: 0.8rem 0 0.7rem;
+
+    th {
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.7rem;
+      color: var(--bp-text-dim);
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--bp-border);
+    }
+
+    td {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--bp-text);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      font: inherit;
+      color: var(--bp-accent);
+    }
+  }
+
+  &__footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--bp-border);
+  }
+}
