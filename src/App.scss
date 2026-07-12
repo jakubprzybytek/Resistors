@@ -39,13 +39,46 @@ body {
   max-width: 560px;
   padding: 3rem 1rem;
 
+  &--wide {
+    max-width: 700px;
+  }
+
+  &__header {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 0 0 0.4rem;
+  }
+
   &__title {
     font-size: 1.5rem;
     font-weight: 700;
-    margin: 0 0 0.4rem;
+    margin: 0;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+  }
+
+  &__how-it-works-link {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font: inherit;
+    font-size: 0.7rem;
+    color: var(--bp-text-dim);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--bp-accent);
+    }
   }
 
   &__subtitle {
