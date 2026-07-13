@@ -57,7 +57,7 @@ body {
     width: 100%;
     font: inherit;
     font-size: 0.7rem;
-    color: var(--bp-text-dim);
+    color: var(--bp-accent);
     background: transparent;
     border: none;
     padding: 0.2rem 0 0;
@@ -65,9 +65,11 @@ body {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 
     &:hover {
-      color: var(--bp-accent);
+      color: var(--bp-accent-2);
     }
   }
 
