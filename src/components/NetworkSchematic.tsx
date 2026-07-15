@@ -55,6 +55,8 @@ function renderShape(shape: SchematicShape, index: number) {
           </text>
         </g>
       );
+    case "junction":
+      return <circle key={index} className="network-schematic__junction" cx={shape.x} cy={shape.y} r={3} />;
     default:
       return null;
   }

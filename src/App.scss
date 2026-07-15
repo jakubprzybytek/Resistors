@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
 :root {
   --bp-bg: #0b3d66;
   --bp-surface: rgba(255, 255, 255, 0.06);
@@ -24,7 +26,6 @@ body {
     linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
   background-size: 16px 16px, 16px 16px, 80px 80px, 80px 80px;
-  font-family: "Cascadia Code", Consolas, "Courier New", monospace;
   color: var(--bp-text);
 }
 
@@ -35,9 +36,12 @@ body {
 }
 
 .app {
+  --app-font: "Space Grotesk", "Trebuchet MS", sans-serif;
+
   width: 100%;
   max-width: 560px;
   padding: 3rem 1rem;
+  font-family: var(--app-font);
 
   &--wide {
     max-width: 700px;

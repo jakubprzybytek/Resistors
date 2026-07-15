@@ -27,7 +27,13 @@ export interface TerminalShape {
   label: string;
 }
 
-export type SchematicShape = ResistorShape | WireShape | TerminalShape;
+export interface JunctionShape {
+  kind: "junction";
+  x: number;
+  y: number;
+}
+
+export type SchematicShape = ResistorShape | WireShape | TerminalShape | JunctionShape;
 
 export interface Schematic {
   width: number;
@@ -175,6 +181,10 @@ function place(node: Node, x: number, y: number, shapes: SchematicShape[]): Meas
       x2: rightRailX,
       y2: lineY,
     });
+    if (i > 0 && i < children.length - 1) {
+      shapes.push({ kind: "junction", x: leftRailX, y: lineY });
+      shapes.push({ kind: "junction", x: rightRailX, y: lineY });
+    }
 
     topY += childBox.height + PARALLEL_GAP;
   }
@@ -189,6 +199,17 @@ function place(node: Node, x: number, y: number, shapes: SchematicShape[]): Meas
   // Entry/exit leads into the rails, aligned to the node centre line.
   shapes.push({ kind: "wire", x1: x, y1: centerLineY, x2: leftRailX, y2: centerLineY });
   shapes.push({ kind: "wire", x1: rightRailX, y1: centerLineY, x2: x + box.width, y2: centerLineY });
+
+  // A lead that meets the interior of a rail forms a T junction. When it
+  // aligns with a branch row, that row has already supplied the marker.
+  if (
+    centerLineY > topLineY &&
+    centerLineY < bottomLineY &&
+    !lineYs.includes(centerLineY)
+  ) {
+    shapes.push({ kind: "junction", x: leftRailX, y: centerLineY });
+    shapes.push({ kind: "junction", x: rightRailX, y: centerLineY });
+  }
 
   return box;
 }

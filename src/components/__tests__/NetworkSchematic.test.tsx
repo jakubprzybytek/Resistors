@@ -18,6 +18,17 @@ function series(left: Node, right: Node): Node {
   };
 }
 
+function parallel(left: Node, right: Node): Node {
+  return {
+    kind: "parallel",
+    value: (left.value * right.value) / (left.value + right.value),
+    left,
+    right,
+    description: `${left.description} || ${right.description}`,
+    signature: `parallel:${left.signature}|${right.signature}`,
+  };
+}
+
 describe("NetworkSchematic", () => {
   it("renders an accessible svg with the two terminals", () => {
     render(<NetworkSchematic node={leaf(100)} description="100" />);
@@ -33,5 +44,16 @@ describe("NetworkSchematic", () => {
 
     expect(screen.getByText("4.7k")).toBeInTheDocument();
     expect(screen.getByText("100")).toBeInTheDocument();
+  });
+
+  it("renders dots at connected wire intersections but not rail-end corners", () => {
+    const { container } = render(
+      <NetworkSchematic
+        node={parallel(leaf(100), leaf(220))}
+        description="100 || 220"
+      />
+    );
+
+    expect(container.querySelectorAll(".network-schematic__junction")).toHaveLength(2);
   });
 });

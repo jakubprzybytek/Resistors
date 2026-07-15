@@ -27,6 +27,10 @@
     stroke-linecap: round;
   }
 
+  &__junction {
+    fill: var(--bp-accent);
+  }
+
   &__resistor {
     rect {
       fill: none;

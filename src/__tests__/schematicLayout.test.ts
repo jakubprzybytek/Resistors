@@ -3,6 +3,7 @@ import type { Node } from "../network.js";
 import {
   buildSchematic,
   BRANCH_TAIL,
+  type JunctionShape,
   type ResistorShape,
   type TerminalShape,
   type WireShape,
@@ -41,6 +42,8 @@ const terminals = (shapes: { kind: string }[]) =>
   shapes.filter((shape): shape is TerminalShape => shape.kind === "terminal");
 const wires = (shapes: { kind: string }[]) =>
   shapes.filter((shape): shape is WireShape => shape.kind === "wire");
+const junctions = (shapes: { kind: string }[]) =>
+  shapes.filter((shape): shape is JunctionShape => shape.kind === "junction");
 
 describe("buildSchematic", () => {
   it("renders a single resistor between two labelled terminals", () => {
@@ -79,6 +82,18 @@ describe("buildSchematic", () => {
     expect(drawn[0].y).not.toBe(drawn[1].y);
     // Share the same horizontal band (overlapping x extents).
     expect(drawn[0].x).toBe(drawn[1].x);
+  });
+
+  it("marks three-way parallel wire intersections, but not rail-end corners", () => {
+    const twoBranchSchematic = buildSchematic(parallel(leaf(100), leaf(220)));
+    const threeBranchSchematic = buildSchematic(
+      parallel(leaf(100), parallel(leaf(220), leaf(330)))
+    );
+
+    // Central leads meet the continuous rails as T junctions.
+    expect(junctions(twoBranchSchematic.shapes)).toHaveLength(2);
+    // The interior branch and central leads each meet both continuous rails.
+    expect(junctions(threeBranchSchematic.shapes)).toHaveLength(4);
   });
 
   it("produces positive dimensions that bound every shape", () => {
