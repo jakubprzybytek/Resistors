@@ -29,29 +29,34 @@ function App() {
     setCalcId((current) => current + 1);
   };
 
-  if (page === "how-it-works") {
-    return (
-      <main className="app app--wide">
-        <HowItWorksPage onBack={() => setPage("calculator")} />
-      </main>
-    );
-  }
-
   return (
-    <main className="app">
-      <h1 className="app__title">Resistor Network Calculator</h1>
-      <button
-        className="app__how-it-works-link"
-        type="button"
-        onClick={() => setPage("how-it-works")}
-        aria-label="How it works"
-      >
-        ? How it works
-      </button>
-      <p className="app__subtitle">// find a resistor combination that hits your target</p>
-      <ResistorForm onCalculate={handleCalculate} />
-      {hasCalculated && <RankingView key={calcId} model={model} />}
-    </main>
+    <>
+      {page === "how-it-works" ? (
+        <main className="app app--wide">
+          <HowItWorksPage onBack={() => setPage("calculator")} />
+        </main>
+      ) : (
+        <main className="app">
+          <h1 className="app__title">Resistor Network Calculator</h1>
+          <button
+            className="app__how-it-works-link"
+            type="button"
+            onClick={() => setPage("how-it-works")}
+            aria-label="How it works"
+          >
+            ? How it works
+          </button>
+          <p className="app__subtitle">// find a resistor combination that hits your target</p>
+          <ResistorForm onCalculate={handleCalculate} />
+          {hasCalculated && <RankingView key={calcId} model={model} />}
+        </main>
+      )}
+      <footer className="app-footer">
+        <a href="https://contactme.albedoonline.com" target="_blank" rel="noopener noreferrer">
+          Contact Me
+        </a>
+      </footer>
+    </>
   );
 }
 

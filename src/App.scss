@@ -32,7 +32,8 @@ body {
 #root {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .app {
@@ -40,6 +41,8 @@ body {
 
   width: 100%;
   max-width: 560px;
+  box-sizing: border-box;
+  flex: 1;
   padding: 3rem 1rem;
   font-family: var(--app-font);
 
@@ -82,5 +85,24 @@ body {
     color: var(--bp-text-dim);
     font-size: 0.85rem;
     margin: 0 0 2rem;
+  }
+}
+
+.app-footer {
+  width: min(100% - 2rem, 560px);
+  box-sizing: border-box;
+  padding: 1rem 0 1.5rem;
+  border-top: 1px solid var(--bp-border);
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  font-size: 0.75rem;
+  text-align: center;
+
+  a {
+    color: var(--bp-text-dim);
+    text-underline-offset: 3px;
+
+    &:hover {
+      color: var(--bp-accent-2);
+    }
   }
 }
