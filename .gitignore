@@ -5,3 +5,6 @@ test-results
 playwright-report
 blob-report
 *.local
+
+# AWS IAM documents with the account number
+infra/github/private/

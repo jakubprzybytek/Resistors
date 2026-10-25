@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Identity",
+      "Effect": "Allow",
+      "Action": ["sts:GetCallerIdentity"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SstState",
+      "Effect": "Allow",
+      "Action": ["ssm:GetParameter", "ssm:GetParameters", "ssm:PutParameter", "ssm:DeleteParameter"],
+      "Resource": "arn:aws:ssm:*:ACCOUNT_ID:parameter/sst/*"
+    },
+    {
+      "Sid": "Buckets",
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": [
+        "arn:aws:s3:::resistor-network-*",
+        "arn:aws:s3:::resistor-network-*/*"
+      ]
+    },
+    {
+      "Sid": "Edge",
+      "Effect": "Allow",
+      "Action": ["cloudfront:*", "cloudfront-keyvaluestore:*", "acm:*", "route53:*"],
+      "Resource": "*"
+    }
+  ]
+}

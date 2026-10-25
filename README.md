@@ -81,11 +81,8 @@ Pushes to `main` trigger [.github/workflows/deploy.yml](.github/workflows/deploy
 
 1. Installs dependencies
 2. Runs unit tests (`npm test`) and e2e tests (`npm run test:e2e`)
-3. Authenticates to AWS via OIDC (`aws-actions/configure-aws-credentials@v6`)
+3. Signs in to AWS through GitHub OIDC as the IAM role `GitHub-Resistors` (no access keys)
 4. Deploys to the `int` stage (`npx sst deploy --stage int`)
 
-The workflow requires the following repository/environment variables to be set in
-GitHub for the AWS OIDC step to succeed:
-
-- `AWS_ROLE_ARN` — IAM role ARN to assume
-- `AWS_REGION` — target AWS region
+GitHub needs the repository secret `AWS_ACCOUNT_ID` and the variable `AWS_REGION`.
+The role and its permissions are described in [infra/github/README.md](infra/github/README.md).
