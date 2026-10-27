@@ -105,4 +105,10 @@ body {
       color: var(--bp-accent-2);
     }
   }
+
+  &__version {
+    margin-left: 0.75rem;
+    color: var(--bp-text-dim);
+    opacity: 0.7;
+  }
 }

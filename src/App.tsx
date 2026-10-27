@@ -55,6 +55,7 @@ function App() {
         <a href="https://contactme.albedoonline.com" target="_blank" rel="noopener noreferrer">
           Contact Me
         </a>
+        <span className="app-footer__version">{import.meta.env.VITE_APP_VERSION ?? "local"}</span>
       </footer>
     </>
   );

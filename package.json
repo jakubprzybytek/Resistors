@@ -6,22 +6,20 @@
   "scripts": {
     "start": "tsx main.ts",
     "dev": "vite",
+    "deploy": "sst deploy",
     "build": "vite build",
     "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "test:e2e:int": "BASE_URL=https://resistors.albedoonline.com playwright test",
-    "sst:dev": "sst dev",
-    "sst:deploy": "sst deploy",
-    "sst:deploy:int": "sst deploy --stage int",
-    "sst:unlock:int": "sst unlock --stage int"
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.19.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",

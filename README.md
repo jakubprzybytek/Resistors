@@ -61,28 +61,9 @@ npm run test:e2e
 
 ## Deploying to AWS
 
-The app is deployed as a static site using [SST](https://sst.dev) (`sst.config.ts`).
+The app is a static site deployed with [SST](https://sst.dev) (`sst.config.ts`) to the stages `dev`, `int` and
+`prod` (https://resistors.albedoonline.com). Every push to `main` goes through
+[Continuous Delivery](.github/workflows/continuous-delivery.yaml): typecheck and unit tests, deploy `int`, E2E
+tests against it, tag the next release `vM.N`, deploy `prod` from the tag.
 
-Deploy manually from your machine (requires AWS credentials configured locally):
-
-```bash
-npx sst deploy --stage <stage-name>
-```
-
-For local development against live AWS resources:
-
-```bash
-npm run sst:dev
-```
-
-### CI/CD
-
-Pushes to `main` trigger [.github/workflows/deploy.yml](.github/workflows/deploy.yml), which:
-
-1. Installs dependencies
-2. Runs unit tests (`npm test`) and e2e tests (`npm run test:e2e`)
-3. Signs in to AWS through GitHub OIDC as the IAM role `GitHub-Resistors` (no access keys)
-4. Deploys to the `int` stage (`npx sst deploy --stage int`)
-
-GitHub needs the repository secret `AWS_ACCOUNT_ID` and the variable `AWS_REGION`.
-The role and its permissions are described in [infra/github/README.md](infra/github/README.md).
+Stages, commands, delivery and rollback: [docs/development.md](docs/development.md).
